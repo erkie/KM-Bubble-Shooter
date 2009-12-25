@@ -1,0 +1,11 @@
+kattMickisShooter.xcodeproj
+kattMickisShooter_Prefix.pch
+Info.plist
+SDLMain.h
+SDLMain.m
+English.lproj
+build
+SDL_gfx
+Sounds/*_data
+Sounds/*.aup*
+*.psd
