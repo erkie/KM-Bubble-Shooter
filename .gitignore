@@ -9,3 +9,10 @@ SDL_gfx
 Sounds/*_data
 Sounds/*.aup*
 *.psd
+*.o
+Thumbs.db
+Makefile.win
+icon.ico
+kattMickisShooter.dev
+kattMickisShooter.ico
+kattMickisShooter_*

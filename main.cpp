@@ -54,6 +54,9 @@ int main(int argc, char *argv[])
 		return 3;
 	}
 	
+	// Enable key repeat
+	SDL_EnableKeyRepeat(250, 100);
+	
 	SDL_Surface *screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, screen_flags);
 	if ( screen == NULL )
 	{

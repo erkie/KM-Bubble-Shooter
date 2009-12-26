@@ -64,12 +64,12 @@ void InputNode::onclick()
 	renderText();
 }
 
-void InputNode::ontype(Uint16 code)
+void InputNode::ontype(Uint16 code, SDLKey k)
 {
 	Uint16 key = code;
 	if ( (code & 0xFF80) == 0 ) // I dunno
 	{
-		if ( code == 127 )
+		if ( k == SDLK_BACKSPACE )
 		{
 			_curr_index--;
 			if ( _curr_index >= 0 ) 
@@ -77,7 +77,7 @@ void InputNode::ontype(Uint16 code)
 			else
 				_curr_index = 0;
 		}
-		else if ( code == 13 )
+		else if ( k == SDLK_RETURN )
 		{
 			submit();
 			return;

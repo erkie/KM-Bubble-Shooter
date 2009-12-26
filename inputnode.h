@@ -33,7 +33,7 @@ public:
 	void renderText();
 	void draw(SDL_Surface *);
 	void onclick();
-	void ontype(Uint16);
+	void ontype(Uint16, SDLKey);
 	void submit();
 };
 

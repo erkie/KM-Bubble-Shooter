@@ -65,7 +65,7 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 			if ( _focus_node )
 			{
 				Uint16 key = event.key.keysym.unicode;
-				_focus_node->ontype(key);
+				_focus_node->ontype(key, event.key.keysym.sym);
 			}
 			break;
 			
