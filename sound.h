@@ -14,5 +14,6 @@ void play_ball_bounce();
 void play_ball_thud();
 void play_ball_die();
 void play_lose();
+void play_win();
 
 #endif

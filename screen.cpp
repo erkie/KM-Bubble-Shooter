@@ -34,6 +34,33 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 {
 	switch ( type )
 	{
+		case Down:
+			{
+				Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
+				
+				if ( node )
+				{
+					_focus_node = node;
+				}
+				else
+					_focus_node = NULL;
+				
+				_is_dragging = true;
+			}
+			break;
+		
+		case Scroll:
+			if ( _focus_node )
+				_focus_node->onscroll(event.button.button == SDL_BUTTON_WHEELUP);
+			break;
+		
+		case Move:
+			if ( _is_dragging && _focus_node )
+			{
+				_focus_node->ondrag(event.motion.xrel, event.motion.yrel);
+			}
+			break;
+		
 		case Type:
 			if ( _focus_node )
 			{
@@ -43,14 +70,22 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 			break;
 			
 		case Click:
-			Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
-			if ( node )
+			if ( _focus_node )
+				_focus_node->onclick();
+			_is_dragging = false;
+			break;
+	}
+}
+
+void Screen::fireEvent(Events type)
+{
+	switch ( type )
+	{
+		case Show:
+			for ( node_list::iterator iter = _nodes.begin(); iter != _nodes.end(); iter++)
 			{
-				_focus_node = node;
-				node->onclick();
+				(*iter)->onshow();
 			}
-			else
-				_focus_node = NULL;
 			break;
 	}
 }

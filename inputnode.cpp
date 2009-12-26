@@ -28,8 +28,10 @@ InputNode::InputNode(Screen *screen): Node(screen), _curr_index(0)
 		_str[_curr_index] = *c;
 	
 	// Load font
-	_font = load_font(20);
-	_foreground.r = _foreground.g = _foreground.b = 0xFF;
+	_font = load_font(16);
+	_foreground.r = 54;
+	_foreground.g = 64;
+	_foreground.b = 66;
 	
 	// (Input field) Position is everything
 	_xpos = 2;
@@ -49,7 +51,7 @@ void InputNode::draw(SDL_Surface *surface)
 {
 	SDL_Rect rect = _screen->makeRect(_xpos, _ypos);
 	rect.x += 5;
-	rect.y += 2;
+	rect.y += 6;
 	
 	// Blit input text
 	SDL_BlitSurface(_text, NULL, surface, &rect);
@@ -97,4 +99,6 @@ void InputNode::submit()
 	hs.score = _screen->game()->lastPoints();
 	_screen->menu()->manager.add(hs);
 	_screen->menu()->manager.save();
+	
+	_screen->menu()->showScreen(Menu::Home);
 }

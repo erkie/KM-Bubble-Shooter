@@ -32,9 +32,6 @@ Menu::Menu(Game *game): Drawable(game), _current_screen(NULL)
 	
 	manager.load();
 	highscore_list scores = manager.get();
-	
-	for ( highscore_list::iterator iter = scores.begin(); iter != scores.end();  iter++ )
-		std::cout << (*iter)->score << std::endl;
 }
 
 void Menu::tick() {}
@@ -59,6 +56,21 @@ void Menu::handleEvent(const SDL_Event &event)
 	
 	switch (event.type)
 	{
+		case SDL_MOUSEBUTTONDOWN:
+			if ( event.button.button != SDL_BUTTON_WHEELDOWN && event.button.button != SDL_BUTTON_WHEELUP )
+			{
+				_current_screen->fireEvent(Screen::Down, event);
+			}
+			else
+			{
+				_current_screen->fireEvent(Screen::Scroll, event);
+			}
+
+			break;
+		case SDL_MOUSEMOTION:
+			_current_screen->fireEvent(Screen::Move, event);
+			break;
+			
 		case SDL_MOUSEBUTTONUP:
 			_current_screen->fireEvent(Screen::Click, event);
 			break;
@@ -72,6 +84,7 @@ void Menu::handleEvent(const SDL_Event &event)
 void Menu::showScreen(MenuScreen menu)
 {
 	_current_screen = _screens[menu];
+	_current_screen->fireEvent(Screen::Show);
 	if ( menu == Submit )
 	{
 		((HighscoreScreen*)_current_screen)->renderPointsText();

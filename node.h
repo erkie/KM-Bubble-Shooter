@@ -35,6 +35,9 @@ public:
 	virtual void onclick() {};
 	virtual void onhover() {};
 	virtual void ontype(Uint16 key) {};
+	virtual void onshow() {};
+	virtual void ondrag(int relx, int rely) {};
+	virtual void onscroll(bool up) {};
 };
 
 #endif

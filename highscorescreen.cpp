@@ -47,7 +47,7 @@ HighscoreScreen::HighscoreScreen(Menu *menu): Screen(menu)
 	_text_rect.y = 10 + _pos.y;
 	
 	// Initialize X points
-	_font = load_font(18);
+	_font = load_font(20);
 	renderPointsText();
 	
 	addNode(new InputNode(this));
@@ -67,7 +67,7 @@ void HighscoreScreen::renderPointsText()
 {
 	std::stringstream text;
 	text << _menu->game()->lastPoints();
-	text << " points";
+	text << " points!";
 	_points = TTF_RenderText_Blended(_font, text.str().c_str(), _fg);
 	
 	_points_rect = _text_rect;

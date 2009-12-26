@@ -252,7 +252,18 @@ void Game::lost()
 	play_lose();
 	
 	_last_points = _points;
-	_menu->showScreen(Menu::Home);
+	_menu->showScreen(Menu::Submit);
+	pause();
+	reset();
+}
+
+void Game::win()
+{
+	play_win();
+	
+	_points *= 2;
+	_last_points = _points;
+	_menu->showScreen(Menu::Submit);
 	pause();
 	reset();
 }

@@ -28,10 +28,12 @@ protected:
 	Node *_focus_node;
 	
 	Menu *_menu;
-public:
-	enum Events {Click, Hover, Type};
 	
-	Screen(Menu *menu): _menu(menu), _focus_node(NULL) {};
+	bool _is_dragging;
+public:
+	enum Events {Click, Hover, Type, Scroll, Show, Down, Move};
+	
+	Screen(Menu *menu): _menu(menu), _focus_node(NULL), _is_dragging(false) {};
 	~Screen();
 	
 	void addNode(Node *node);
@@ -41,6 +43,7 @@ public:
 	SDL_Rect makeRect(int x, int y);
 	
 	void fireEvent(Events type, const SDL_Event &event);
+	void fireEvent(Events type);
 	Node *getNodeOn(int x, int y);
 	
 	Game *game();

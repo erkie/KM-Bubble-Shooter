@@ -68,6 +68,11 @@ void Grid::removeBall(Ball *ball)
 {
 	_game->removeDrawable(ball);
 	delete ball;
+	
+	if ( _balls.size() == 0 )
+	{
+		_game->win();
+	}
 }
 
 void Grid::addBall(Ball *ball)

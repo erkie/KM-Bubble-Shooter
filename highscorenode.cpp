@@ -12,7 +12,9 @@
 
 #include "mysdl.h"
 
+#include "screen.h"
 #include "node.h"
+#include "scorescrollnode.h"
 #include "highscorenode.h"
 
 HighscoreNode::HighscoreNode(Screen *screen): Node(screen)
@@ -24,6 +26,8 @@ HighscoreNode::HighscoreNode(Screen *screen): Node(screen)
 	
 	_xpos = 175;
 	_ypos = 10;
-	_w = 200;
-	_h = 200;
+	_w = _image->clip_rect.w;
+	_h = _image->clip_rect.h;
+	
+	_screen->addNode(new ScoreScrollNode(_screen));
 }

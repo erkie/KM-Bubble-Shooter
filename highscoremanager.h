@@ -10,6 +10,7 @@
 #ifndef __HIGHSCOREMANAGER_H__
 #define __HIGHSCOREMANAGER_H__
 
+#include <iostream>
 #include <list>
 #include <algorithm>
 
@@ -22,6 +23,11 @@ struct Highscore
 };
 
 typedef std::list<Highscore *> highscore_list;
+
+bool inline comp_highscore(Highscore *one, Highscore *two)
+{
+	return one->score > two->score;
+}
 
 class HighscoreManager
 {

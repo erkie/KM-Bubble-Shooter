@@ -118,6 +118,7 @@ public:
 	void checkRowCount();
 	void decrementLives();
 	void lost();
+	void win();
 	void reset();
 	
 	// Points

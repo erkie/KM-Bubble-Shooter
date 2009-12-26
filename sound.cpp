@@ -7,6 +7,8 @@
  *
  */
 
+#include <iostream>
+
 #include "SDL_mixer/SDL_mixer.h"
 #include "sound.h"
 
@@ -31,5 +33,13 @@ void play_ball_die()
 void play_lose()
 {
 	static Mix_Chunk *sound = Mix_LoadWAV("no.wav");
+	Mix_PlayChannel(-1, sound, 0);
+}
+
+void play_win()
+{
+	static Mix_Chunk *sound = Mix_LoadWAV("hurray.wav");
+	if ( ! sound )
+		std::cout << Mix_GetError();
 	Mix_PlayChannel(-1, sound, 0);
 }
