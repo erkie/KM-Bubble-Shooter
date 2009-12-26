@@ -24,10 +24,21 @@ private:
 	
 	SDL_Color _fg;
 	TTF_Font *_font;
+	
+	Uint16 _name[40];
 public:
 	HighscoreScreen(Menu *menu);
+	
+	void name(Uint16 name[40])
+	{
+		for ( int i = 0; i < 40; i++ )
+			_name[i] = name[i];
+	};
+	
 	void draw(SDL_Surface *surface);
 	void renderPointsText();
+	
+	void submit();
 };
 
 #endif

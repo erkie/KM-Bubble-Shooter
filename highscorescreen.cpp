@@ -17,12 +17,17 @@
 
 // Nodes
 #include "inputnode.h"
+#include "cancelnode.h"
+#include "submitnode.h"
 #include "highscorenode.h"
 
 #include "highscorescreen.h"
 
 HighscoreScreen::HighscoreScreen(Menu *menu): Screen(menu)
 {
+	for ( int i = 0; i < 40; i++ )
+		_name[i] = '\0';
+	
 	_image = IMG_Load("highscore.png");
 	
 	// My position on the screen
@@ -51,6 +56,8 @@ HighscoreScreen::HighscoreScreen(Menu *menu): Screen(menu)
 	renderPointsText();
 	
 	addNode(new InputNode(this));
+	addNode(new CancelNode(this));
+	addNode(new SubmitNode(this));
 	addNode(new HighscoreNode(this));
 }
 
@@ -72,4 +79,19 @@ void HighscoreScreen::renderPointsText()
 	
 	_points_rect = _text_rect;
 	_points_rect.y += _text->clip_rect.h;
+}
+
+void HighscoreScreen::submit()
+{
+	if ( _name[0] == '\0' )
+		return;
+	
+	Highscore hs;
+	for ( int i = 0; i < 40; i++ )
+		hs.name[i] = _name[i];
+	hs.score = game()->lastPoints();
+	menu()->manager.add(hs);
+	menu()->manager.save();
+	
+	menu()->showScreen(Menu::Home);	
 }

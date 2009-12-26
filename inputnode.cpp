@@ -13,6 +13,8 @@
 #include "mysdl.h"
 #include "highscoremanager.h"
 
+#include "highscorescreen.h"
+
 #include "game.h"
 #include "menu.h"
 #include "screen.h"
@@ -87,18 +89,12 @@ void InputNode::ontype(Uint16 code, SDLKey k)
 			_str[_curr_index] = key;
 			_curr_index++;
 		}
+		((HighscoreScreen*)_screen)->name(_str);
 		renderText();
 	}
 }
 
 void InputNode::submit()
 {
-	Highscore hs;
-	for ( int i = 0; i < 40; i++ )
-		hs.name[i] = _str[i];
-	hs.score = _screen->game()->lastPoints();
-	_screen->menu()->manager.add(hs);
-	_screen->menu()->manager.save();
-	
-	_screen->menu()->showScreen(Menu::Home);
+	((HighscoreScreen*)_screen)->submit();
 }
