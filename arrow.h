@@ -14,14 +14,14 @@
 
 #include "SDL.h"
 
-#include "drawable.h"
+#include "sprite.h"
 #include "vector.h"
 #include "ball.h"
 
 const int ARROW_QUEUE_SIZE = 5;
 const Uint8 ARROW_BALL_OPACITY = 0x99;
 
-class Arrow: public Drawable
+class Arrow: public Sprite
 {
 	static const double MAX_ANGLE = 170;
 	static const double MIN_ANGLE = 10;

@@ -65,4 +65,22 @@ void HighscoreManager::add(Highscore &score)
 	_scores.push_back(s);
 	
 	_scores.sort(comp_highscore);
+	
+	if ( _scores.size() >= HIGHSCORES_SAVED )
+		_scores.pop_back();
+}
+
+bool HighscoreManager::isHighscore(long score)
+{
+	if ( _scores.size() < HIGHSCORES_SAVED )
+		return true;
+	
+	_scores.sort(comp_highscore);
+	highscore_list::iterator iter = _scores.begin();
+	advance(iter, HIGHSCORES_SAVED);
+	
+	if ( score > (*iter)->score )
+		return true;
+	
+	return false;
 }

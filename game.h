@@ -23,7 +23,7 @@ const int GAME_LIVES = 6;
 
 class Grid;
 class Arrow;
-class Drawable;
+class Sprite;
 class Background;
 class Points;
 class Menu;
@@ -31,8 +31,8 @@ class Menu;
 class Game
 {
 private:
-	typedef std::list<Drawable*> list;
-	//typedef std::queue<Drawable*> queue;
+	typedef std::list<Sprite*> list;
+	//typedef std::queue<Sprite*> queue;
 	typedef list queue;
 	
 	SDL_Surface *_screen;
@@ -45,7 +45,7 @@ private:
 	int _width;
 	int _height;
 	
-	list _drawables;
+	list _sprites;
 	
 	int _fps;
 	Uint32 _last_ticks;
@@ -55,13 +55,13 @@ private:
 	queue _rem_queue;
 	queue _add_queue;
 	
-	// This flag will be set to true if anything has been removed from the drawables list
+	// This flag will be set to true if anything has been removed from the sprites list
 	bool _is_dirty;
 	
 	Grid *_grid;
 	Arrow *_arrow;
 	Background *_background;
-	Points *_points_drawable;
+	Points *_points_sprite;
 	Menu *_menu;
 	
 	bool _running;
@@ -99,9 +99,9 @@ public:
 	Arrow *arrow() const { return _arrow; };
 	Background *background() const { return _background; };
 	
-	void addDrawable(Drawable*);
-	void removeDrawable(Drawable*);
-	void removeDrawableImmediately(Drawable*);
+	void addSprite(Sprite*);
+	void removeSprite(Sprite*);
+	void removeSpriteImmediately(Sprite*);
 	
 	void cleanupList();
 	void cap();
@@ -119,6 +119,7 @@ public:
 	void decrementLives();
 	void lost();
 	void win();
+	void showSubmit();
 	void reset();
 	
 	// Points

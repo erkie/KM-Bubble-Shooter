@@ -10,7 +10,7 @@
 #ifndef __BALL_H__
 #define __BALL_H__
 
-#include "drawable.h"
+#include "sprite.h"
 #include "vector.h"
 #include "fx.h"
 
@@ -20,7 +20,7 @@ const int BALL_GRID_H = 15;
 const int BALL_WIDTH = 23;
 const int BALL_HEIGHT = 23;
 
-class Ball: public Drawable
+class Ball: public Sprite
 {
 private:
 	SDL_Rect _temp_rect;

@@ -14,7 +14,7 @@
 #include "game.h"
 #include "points.h"
 
-Points::Points(Game *game): Drawable(game), _last_points(0), _image(NULL)
+Points::Points(Game *game): Sprite(game), _last_points(0), _image(NULL)
 {
 	_font = load_font(20);
 	

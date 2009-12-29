@@ -1,5 +1,5 @@
 /*
- *  drawable.h
+ *  sprite.h
  *  kattMickisShooter
  *
  *  Created by Erik Andersson on 2009-11-18.
@@ -15,13 +15,13 @@
 
 class Game;
 
-class Drawable
+class Sprite
 {
 protected:
 	Game *_game;
 public:
-	Drawable() {};
-	Drawable(Game *game): _game(game) {};
+	Sprite() {};
+	Sprite(Game *game): _game(game) {};
 	
 	virtual void handleEvent(const SDL_Event &event) {};
 	virtual void tick() = 0;

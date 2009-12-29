@@ -12,7 +12,7 @@
 #include "background.h"
 #include "game.h"
 
-Background::Background(Game *game): Drawable(game)
+Background::Background(Game *game): Sprite(game)
 {
 	_color = SDL_MapRGBA(_game->buffer()->format, 92, 110, 114, SDL_ALPHA_OPAQUE);
 }

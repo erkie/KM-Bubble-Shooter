@@ -12,7 +12,7 @@
 #include "game.h"
 #include "grid.h"
 
-Grid::Grid(Game *game): Drawable(game), _remove_top(NULL)
+Grid::Grid(Game *game): Sprite(game), _remove_top(NULL)
 {
 	
 }
@@ -66,7 +66,7 @@ void Grid::draw()
 
 void Grid::removeBall(Ball *ball)
 {
-	_game->removeDrawable(ball);
+	_game->removeSprite(ball);
 	delete ball;
 	
 	if ( _balls.size() == 0 )

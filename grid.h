@@ -13,7 +13,7 @@
 #include <list>
 
 #include "ball.h"
-#include "drawable.h"
+#include "sprite.h"
 
 // This class will be used by the search-part of Grid
 class GridPos
@@ -23,7 +23,7 @@ public:
 	int x, y;
 };
 
-class Grid: public Drawable
+class Grid: public Sprite
 {
 private:
 	typedef std::list<Ball*> ball_list;

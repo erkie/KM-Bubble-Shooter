@@ -43,12 +43,61 @@ ScoreScrollNode::ScoreScrollNode(Screen *screen): Node(screen)
 	
 	_bg_color.r = _bg_color.b = 0;
 	_bg_color.g = 0;
+	
+	_font_height = TTF_FontHeight(_font);
 }
 
 void ScoreScrollNode::draw(SDL_Surface *surface)
 {
+	if ( _scores.size() == 0 )
+		return;
+	
+	// the area on which we draw ourselves
 	SDL_Rect rect = _screen->makeRect(_xpos, _ypos);
-	SDL_BlitSurface(_image, &_scroll_rect, surface, &rect);
+	rect.w = _w;
+	rect.h = _h;
+	
+	// unit height is the height of one score element
+	int unit_height = _font_height * 2;
+	
+	int start_score = _scroll_rect.y / unit_height;
+	
+	// Check bounds for end_score
+	int end_score = _h / unit_height + 2 + start_score;
+	end_score = (end_score > _scores.size()) ? _scores.size() : end_score;
+	
+	SDL_Rect position, cp_position;
+	position.x = rect.x;
+	position.y = start_score * unit_height - _scroll_rect.y + rect.y - 20;
+	
+	SDL_SetClipRect(surface, &rect);
+	
+	score_triplet_list::iterator iter, to;
+	iter = _scores.begin() + start_score;
+	to = _scores.begin() + end_score;
+				 
+	for ( ; iter != to; iter++ )
+	{
+		SDL_Surface **surfaces = (*iter);
+
+		// Blit place
+		position.y += _font_height;
+		cp_position = position;
+		SDL_BlitSurface(surfaces[0], NULL, surface, &cp_position);
+		
+		// Name
+		position.x += surfaces[0]->clip_rect.w;
+		cp_position = position;
+		SDL_BlitSurface(surfaces[1], NULL, surface, &cp_position);
+		
+		// Place
+		position.x = rect.x;
+		position.y += _font_height;
+		cp_position = position;
+		SDL_BlitSurface(surfaces[2], NULL, surface, &cp_position);
+	}
+	
+	SDL_SetClipRect(surface, NULL);
 }
 
 void ScoreScrollNode::renderText()
@@ -69,50 +118,42 @@ void ScoreScrollNode::renderText()
 	
 	// Create surface on which to draw stuff
 	int num_scores = scores.size();
-	int height = num_scores * 2 * TTF_FontHeight(_font);
-	int width = _w;
+	int height = num_scores * 2 * _font_height;
 	
 	_height = height;
 	
-	// Free old text surface (if it exists) and the create new one
-	if ( _image )
-		SDL_FreeSurface(_image);
+	// Kill old stuff
+	for ( score_triplet_list::iterator iter = _scores.begin(); iter != _scores.end(); iter++ )
+	{
+		SDL_Surface **surfaces = (*iter);
+		SDL_FreeSurface(surfaces[0]);
+		SDL_FreeSurface(surfaces[1]);
+		SDL_FreeSurface(surfaces[2]);
+		delete [] surfaces;
+	}
 	
-	_image = SDL_CreateRGBSurface(surface->flags, width, height, surface->format->BitsPerPixel, 0, 0, 0, 0);
-	SDL_SetColorKey(_image, SDL_SRCCOLORKEY, SDL_MapRGB(_image->format, 0, 0, 0));
+	_scores.erase(_scores.begin(), _scores.end());
 	
 	int i = 0;
-	for ( highscore_list::iterator iter = scores.begin(); iter != scores.end(); iter++ )
+	for ( highscore_list::iterator iter = scores.begin(); iter != scores.end(); iter++, i++ )
 	{
 		hs = *iter;
 		str << hs->score << " points";
 		str_place << (i + 1) << ". ";
 		
 		// Render texts
-		place = TTF_RenderText_Shaded(_font, str_place.str().c_str(), _name_color, _bg_color);
-		name = TTF_RenderUNICODE_Shaded(_font, hs->name, _name_color, _bg_color);
-		points = TTF_RenderText_Shaded(_font, str.str().c_str(), _score_color, _bg_color);
+		place = TTF_RenderText_Blended(_font, str_place.str().c_str(), _name_color);
+		name = TTF_RenderUNICODE_Blended(_font, hs->name, _name_color);
+		points = TTF_RenderText_Blended(_font, str.str().c_str(), _score_color);
 		
-		// Draw position
-		position.y = i * name->clip_rect.h * 2;
-		SDL_BlitSurface(place, &_image->clip_rect, _image, &position);
-		
-		// Draw name
-		position.x += place->clip_rect.h;
-		SDL_BlitSurface(name, &_image->clip_rect, _image, &position);
-		
-		// Draw score
-		position.x = 0;
-		position.y += name->clip_rect.h;
-		SDL_BlitSurface(points, &_image->clip_rect, _image, &position);
+		SDL_Surface **surfaces = new SDL_Surface*[3];
+		surfaces[0] = place;
+		surfaces[1] = name;
+		surfaces[2] = points;
+		_scores.push_back(surfaces);
 		
 		str.str("");
 		str_place.str("");
-		i++;
-		
-		SDL_FreeSurface(name);
-		SDL_FreeSurface(points);
-		SDL_FreeSurface(place);
 	}
 }
 

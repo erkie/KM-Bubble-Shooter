@@ -13,9 +13,9 @@
 #include "SDL.h"
 #include "SDL_ttf/SDL_ttf.h"
 
-#include "drawable.h"
+#include "sprite.h"
 
-class Points: public Drawable
+class Points: public Sprite
 {
 private:
 	SDL_Surface *_image;

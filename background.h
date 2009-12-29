@@ -11,9 +11,9 @@
 #define __BACKGROUND_H__
 
 #include "SDL.h"
-#include "drawable.h"
+#include "sprite.h"
 
-class Background: public Drawable
+class Background: public Sprite
 {
 private:
 	SDL_Rect _pos;

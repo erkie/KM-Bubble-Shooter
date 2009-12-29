@@ -17,7 +17,7 @@
 #include "ball.h"
 #include "vector.h"
 
-Arrow::Arrow(Game *game): Drawable(game)
+Arrow::Arrow(Game *game): Sprite(game)
 {
 	_image = IMG_Load("arrow.png");
 	if ( ! _image )
@@ -152,7 +152,7 @@ void Arrow::release()
 		return;
 	
 	_current_ball->is_pinned = false;
-	_game->addDrawable(_current_ball);
+	_game->addSprite(_current_ball);
 	setReady(false);
 	
 	setCurrent();

@@ -25,7 +25,7 @@
 
 #include "ball.h"
 
-Ball::Ball(Game *game): Drawable(game), is_pinned(false), _was_dangly(false)
+Ball::Ball(Game *game): Sprite(game), is_pinned(false), _was_dangly(false)
 {
 	setColor(Random);
 	_sprite = _image;
@@ -129,7 +129,7 @@ void Ball::tick()
 			// Remove myself from the void
 			_game->arrow()->setReady(true);
 			
-			_game->removeDrawable(this);
+			_game->removeSprite(this);
 			
 			active();
 			satisfyGrid();
@@ -209,13 +209,13 @@ void Ball::satisfyGrid()
 	
 	x = (x >= BALL_GRID_W) ? BALL_GRID_W - 1 : x;
 	
-	_grid_x = x;
-	_grid_y = y;
-	
 	if ( _game->grid()->hasBallOn(x, y) )
 	{
 		y++;
 	}
+	
+	_grid_x = x;
+	_grid_y = y;
 	
 	gridToPos(x, y);
 }

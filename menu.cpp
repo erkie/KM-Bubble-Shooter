@@ -19,7 +19,7 @@
 #include "screen.h"
 #include "menu.h"
 
-Menu::Menu(Game *game): Drawable(game), _current_screen(NULL)
+Menu::Menu(Game *game): Sprite(game), _current_screen(NULL)
 {
 	// Initialize overlay
 	_overlay = IMG_Load("menu.png");
@@ -83,8 +83,15 @@ void Menu::handleEvent(const SDL_Event &event)
 
 void Menu::showScreen(MenuScreen menu)
 {
+	if ( menu == Submit )
+	{
+		if ( ! manager.isHighscore(_game->lastPoints()) )
+			menu = Home;
+	}
+	
 	_current_screen = _screens[menu];
 	_current_screen->fireEvent(Screen::Show);
+	
 	if ( menu == Submit )
 	{
 		((HighscoreScreen*)_current_screen)->renderPointsText();

@@ -17,11 +17,11 @@
 #include "highscoremanager.h"
 
 #include "game.h"
-#include "drawable.h"
+#include "sprite.h"
 
 class Screen;
 
-class Menu: public Drawable
+class Menu: public Sprite
 {
 private:
 	SDL_Surface *_overlay;

@@ -14,7 +14,7 @@
 
 #include "sound.h"
 #include "game.h"
-#include "drawable.h"
+#include "sprite.h"
 
 #include "background.h"
 #include "arrow.h"
@@ -39,18 +39,18 @@ Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _l
 	_fps = GAME_FPS;
 	_last_ticks = 0;
 	
-	// Create base drawables
+	// Create base sprites
 	_arrow = new Arrow(this);
 	_background = new Background(this);
 	_grid = new Grid(this);
-	_points_drawable = new Points(this);
+	_points_sprite = new Points(this);
 	_menu = new Menu(this);
 	
-	_drawables.push_back(_background);
-	_drawables.push_back(_arrow);
-	_drawables.push_back(_grid);
-	_drawables.push_back(_points_drawable);
-	_drawables.push_back(_menu);
+	_sprites.push_back(_background);
+	_sprites.push_back(_arrow);
+	_sprites.push_back(_grid);
+	_sprites.push_back(_points_sprite);
+	_sprites.push_back(_menu);
 	
 	Mix_Volume(-1, _volume);
 	
@@ -77,15 +77,15 @@ void Game::pause()
 	_is_paused = true;
 }
 
-void Game::addDrawable(Drawable *drawable)
+void Game::addSprite(Sprite *sprite)
 {
-	_add_queue.push_back(drawable);
+	_add_queue.push_back(sprite);
 }
 
-void Game::removeDrawable(Drawable *drawable)
+void Game::removeSprite(Sprite *sprite)
 {
 	_is_dirty = true;
-	_rem_queue.push_back(drawable);
+	_rem_queue.push_back(sprite);
 }
 
 void Game::clearBuffer()
@@ -136,15 +136,15 @@ void Game::cleanupList()
 	// Remove elements from remove queue
 	while ( ! _rem_queue.empty() )
 	{
-		Drawable *d = _rem_queue.front();
-		_drawables.remove(d);
+		Sprite *d = _rem_queue.front();
+		_sprites.remove(d);
 		_rem_queue.pop_front();
 	}
 	
 	// Add new elements
 	while ( ! _add_queue.empty() )
 	{
-		_drawables.push_back(_add_queue.front());
+		_sprites.push_back(_add_queue.front());
 		_add_queue.pop_front();
 	}
 	
@@ -156,7 +156,7 @@ void Game::handleEvents()
 	while ( SDL_PollEvent(&_event) )
 	{
 		// Handle sprites' events
-		for ( list::iterator iter = _drawables.begin(); iter != _drawables.end(); iter++ )
+		for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 			(**iter).handleEvent(_event);
 		
 		// Default events
@@ -198,7 +198,7 @@ void Game::handleEvents()
 
 void Game::draw()
 {
-	for ( list::iterator iter = _drawables.begin(); iter != _drawables.end(); iter++ )
+	for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 		(**iter).draw();
 
 	SDL_BlitSurface(_buffer, &_buffer->clip_rect, _screen, &_screen->clip_rect);
@@ -210,7 +210,7 @@ void Game::tick()
 	handleEvents();
 	
 	// Tick each sprite
-	for ( list::iterator iter = _drawables.begin(); iter != _drawables.end(); iter++ )
+	for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 	{
 		// The count-call is mostly a sanity check
 		if ( ! _is_dirty || (_is_dirty && count(_rem_queue.begin(), _rem_queue.end(), *iter) == 0 ) )
@@ -251,8 +251,7 @@ void Game::lost()
 {
 	play_lose();
 	
-	_last_points = _points;
-	_menu->showScreen(Menu::Submit);
+	showSubmit();
 	pause();
 	reset();
 }
@@ -262,10 +261,15 @@ void Game::win()
 	play_win();
 	
 	_points *= 2;
-	_last_points = _points;
-	_menu->showScreen(Menu::Submit);
+	showSubmit();
 	pause();
 	reset();
+}
+
+void Game::showSubmit()
+{
+	_last_points = _points;
+	_menu->showScreen(Menu::Submit);
 }
 
 void Game::reset()
@@ -290,6 +294,6 @@ void Game::addPointsJumbo()
 
 Game::~Game()
 {
-	for ( list::iterator iter = _drawables.begin(); iter != _drawables.end(); iter++ )
+	for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 		delete *iter;
 }

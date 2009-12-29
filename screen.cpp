@@ -82,6 +82,7 @@ void Screen::fireEvent(Events type)
 	switch ( type )
 	{
 		case Show:
+			_focus_node = NULL;
 			for ( node_list::iterator iter = _nodes.begin(); iter != _nodes.end(); iter++)
 			{
 				(*iter)->onshow();

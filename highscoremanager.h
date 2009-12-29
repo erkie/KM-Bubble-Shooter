@@ -16,6 +16,8 @@
 
 #include "SDL.h"
 
+const long HIGHSCORES_SAVED = 30;
+
 struct Highscore
 {
 	long score;
@@ -39,6 +41,8 @@ public:
 	highscore_list &get() { return _scores; }
 	void save();
 	void add(Highscore &score);
+	
+	bool isHighscore(long score);
 };
 
 #endif
