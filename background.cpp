@@ -19,6 +19,13 @@ Background::Background(Game *game): Sprite(game)
 
 void Background::draw()
 {
-	SDL_Surface *buffer = _game->buffer();
-	SDL_FillRect(buffer, &buffer->clip_rect, _color);
+	if ( _game->isPaused() )
+		return;
+	
+	/*SDL_Surface *buffer = _game->buffer();
+	
+	rect_list rects = _game->getDirtyRects();
+	for ( rect_list::iterator iter = rects.begin(); iter != rects.end(); iter++ )
+		SDL_FillRect(buffer, &(*iter), _color);*/
+	SDL_FillRect(_game->buffer(), NULL, _color);
 }

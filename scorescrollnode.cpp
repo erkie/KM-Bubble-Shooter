@@ -24,10 +24,10 @@ ScoreScrollNode::ScoreScrollNode(Screen *screen): Node(screen)
 {	
 	_image = NULL;
 	
-	_xpos = 175;
-	_ypos = 30;
-	_w = 140;
-	_h = 135;
+	_pos.x = 175;
+	_pos.y = 30;
+	_pos.w = 140;
+	_pos.h = 135;
 	
 	_name_color.r = _name_color.g = _name_color.b = 0xFF;
 	_score_color.r = 0xF1;
@@ -38,8 +38,8 @@ ScoreScrollNode::ScoreScrollNode(Screen *screen): Node(screen)
 	
 	_scroll_rect.x = 0;
 	_scroll_rect.y = 0;
-	_scroll_rect.w = _w;
-	_scroll_rect.h = _h;
+	_scroll_rect.w = _pos.w;
+	_scroll_rect.h = _pos.h;
 	
 	_bg_color.r = _bg_color.b = 0;
 	_bg_color.g = 0;
@@ -51,53 +51,8 @@ void ScoreScrollNode::draw(SDL_Surface *surface)
 {
 	if ( _scores.size() == 0 )
 		return;
-	
-	// the area on which we draw ourselves
-	SDL_Rect rect = _screen->makeRect(_xpos, _ypos);
-	rect.w = _w;
-	rect.h = _h;
-	
-	// unit height is the height of one score element
-	int unit_height = _font_height * 2;
-	
-	int start_score = _scroll_rect.y / unit_height;
-	
-	// Check bounds for end_score
-	int end_score = _h / unit_height + 2 + start_score;
-	end_score = (end_score > _scores.size()) ? _scores.size() : end_score;
-	
-	SDL_Rect position, cp_position;
-	position.x = rect.x;
-	position.y = start_score * unit_height - _scroll_rect.y + rect.y - 20;
-	
-	SDL_SetClipRect(surface, &rect);
-	
-	score_triplet_list::iterator iter, to;
-	iter = _scores.begin() + start_score;
-	to = _scores.begin() + end_score;
-				 
-	for ( ; iter != to; iter++ )
-	{
-		SDL_Surface **surfaces = (*iter);
-
-		// Blit place
-		position.y += _font_height;
-		cp_position = position;
-		SDL_BlitSurface(surfaces[0], NULL, surface, &cp_position);
-		
-		// Name
-		position.x += surfaces[0]->clip_rect.w;
-		cp_position = position;
-		SDL_BlitSurface(surfaces[1], NULL, surface, &cp_position);
-		
-		// Place
-		position.x = rect.x;
-		position.y += _font_height;
-		cp_position = position;
-		SDL_BlitSurface(surfaces[2], NULL, surface, &cp_position);
-	}
-	
-	SDL_SetClipRect(surface, NULL);
+	SDL_Rect rect = _screen->makeRect(_pos);
+	SDL_BlitSurface(_image, NULL, surface, &rect);
 }
 
 void ScoreScrollNode::renderText()
@@ -155,6 +110,53 @@ void ScoreScrollNode::renderText()
 		str.str("");
 		str_place.str("");
 	}
+	
+	// draw()
+	// the area on which we draw ourselves
+	SDL_Rect rect = _screen->makeRect(_pos);
+	
+	SDL_FreeSurface(_image);
+	_image = SDL_CreateRGBSurface(surface->flags, _pos.w, _pos.h, surface->format->BitsPerPixel, 0, 0, 0, 0);
+	SDL_BlitSurface(_screen->menu()->overlay(), &rect, _image, NULL);
+	
+	// unit height is the height of one score element
+	int unit_height = _font_height * 2;
+	
+	int start_score = _scroll_rect.y / unit_height;
+	
+	// Check bounds for end_score
+	int end_score = _pos.h / unit_height + 2 + start_score;
+	end_score = (end_score > _scores.size()) ? _scores.size() : end_score;
+	
+	SDL_Rect cp_position;
+	position.x = 0;
+	position.y = start_score * unit_height - _scroll_rect.y;
+	
+	score_triplet_list::iterator iter, to;
+	iter = _scores.begin() + start_score;
+	to = _scores.begin() + end_score;
+	
+	for (; iter != to; iter++ )
+	{
+		SDL_Surface **surfaces = (*iter);
+		
+		// Place
+		cp_position = position;
+		SDL_BlitSurface(surfaces[0], NULL, _image, &cp_position);
+		
+		// Name
+		position.x += surfaces[0]->clip_rect.w;
+		cp_position = position;
+		SDL_BlitSurface(surfaces[1], NULL, _image, &cp_position);
+		
+		// Points
+		position.x -= surfaces[0]->clip_rect.w;
+		position.y += _font_height;
+		cp_position = position;
+		SDL_BlitSurface(surfaces[2], NULL, _image, &cp_position);
+		
+		position.y += _font_height;
+	}
 }
 
 void ScoreScrollNode::onshow()
@@ -166,11 +168,13 @@ void ScoreScrollNode::ondrag(int relx, int rely)
 {
 	_scroll_rect.y += -rely;
 	
-	if ( _scroll_rect.y > _height - _h )
-		_scroll_rect.y = _height - _h;
+	if ( _scroll_rect.y > _height - _pos.h )
+		_scroll_rect.y = _height - _pos.h;
 	
 	if ( _scroll_rect.y < 0 )
 		_scroll_rect.y = 0;
+	
+	renderText();
 }
 
 void ScoreScrollNode::onscroll(bool up)

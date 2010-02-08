@@ -24,10 +24,7 @@ void Screen::addNode(Node *node)
 void Screen::drawNodes(SDL_Surface *surface)
 {
 	for ( node_list::iterator iter = _nodes.begin(); iter != _nodes.end(); iter++ )
-	{
-		Node *node = *iter;
-		node->draw(surface);
-	}
+		(*iter)->draw(surface);
 }
 
 void Screen::fireEvent(Events type, const SDL_Event &event)
@@ -37,14 +34,7 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 		case Down:
 			{
 				Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
-				
-				if ( node )
-				{
-					_focus_node = node;
-				}
-				else
-					_focus_node = NULL;
-				
+				_focus_node = (node) ? node : NULL;
 				_is_dragging = true;
 			}
 			break;
@@ -84,9 +74,7 @@ void Screen::fireEvent(Events type)
 		case Show:
 			_focus_node = NULL;
 			for ( node_list::iterator iter = _nodes.begin(); iter != _nodes.end(); iter++)
-			{
 				(*iter)->onshow();
-			}
 			break;
 	}
 }
@@ -99,12 +87,11 @@ Node *Screen::getNodeOn(int x, int y)
 	return NULL;
 }
 
-SDL_Rect Screen::makeRect(int x, int y)
+SDL_Rect Screen::makeRect(SDL_Rect r)
 {
-	SDL_Rect rect;
-	rect.x = x + _pos.x;
-	rect.y = y + _pos.y;
-	return rect;
+	r.x += _pos.x;
+	r.y += _pos.y;
+	return r;
 }
 
 Screen::~Screen()

@@ -56,11 +56,14 @@ Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _l
 	
 	// Begin game
 	reset();
+	
+	addDirtyRect(screen->clip_rect);
 }
 
 void Game::start()
 {
 	_is_paused = false;
+	_fps = GAME_FPS;
 }
 
 void Game::togglePause()
@@ -69,12 +72,12 @@ void Game::togglePause()
 		start();
 	else
 		pause();
-
 }
 
 void Game::pause()
 {
 	_is_paused = true;
+	_fps = PAUSE_FPS;
 }
 
 void Game::addSprite(Sprite *sprite)
@@ -90,16 +93,17 @@ void Game::removeSprite(Sprite *sprite)
 
 void Game::clearBuffer()
 {
-	SDL_FillRect(_buffer, &_buffer->clip_rect, SDL_MapRGB(_buffer->format, 0xFF, 0xFF, 0xFF));
+	//SDL_FillRect(_buffer, &_buffer->clip_rect, SDL_MapRGB(_buffer->format, 0xFF, 0xFF, 0xFF));
+	_dirty_rects.erase(_dirty_rects.begin(), _dirty_rects.end());
 }
 
 void Game::loop()
 {
 	while ( _running )
 	{
-		clearBuffer();
-		
 		draw();
+		clearBuffer(); // Clear old dirty rects
+		
 		tick();
 		cleanupList();
 		
@@ -155,7 +159,7 @@ void Game::handleEvents()
 {
 	while ( SDL_PollEvent(&_event) )
 	{
-		// Handle sprites' events
+		// Handle the sprites' events
 		for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 			(**iter).handleEvent(_event);
 		
@@ -197,10 +201,10 @@ void Game::handleEvents()
 }
 
 void Game::draw()
-{
+{	
 	for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
 		(**iter).draw();
-
+	
 	SDL_BlitSurface(_buffer, &_buffer->clip_rect, _screen, &_screen->clip_rect);
 	SDL_Flip(_screen);
 }

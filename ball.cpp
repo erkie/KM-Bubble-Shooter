@@ -25,7 +25,14 @@
 
 #include "ball.h"
 
-Ball::Ball(Game *game): Sprite(game), is_pinned(false), _was_dangly(false)
+Ball* Ball::create(Game *game)
+{
+	Ball *b = new Ball(game);
+	game->addSprite(b);
+	return b;
+}
+
+Ball::Ball(Game *game): Sprite(game), _was_dangly(false), _state(Queued)
 {
 	setColor(Random);
 	_sprite = _image;
@@ -35,7 +42,7 @@ Ball::Ball(Game *game): Sprite(game), is_pinned(false), _was_dangly(false)
 	_sprite_rect.h = BALL_HEIGHT;
 	
 	_vel.x(0);
-	_vel.y(-1 * -1 * (_game->size()->h * 2));
+	_vel.y(_game->size()->h * 2);
 	
 	_grid_x = _grid_y = -1;
 	
@@ -43,54 +50,41 @@ Ball::Ball(Game *game): Sprite(game), is_pinned(false), _was_dangly(false)
 	_anim.mode(Fx::Single);
 }
 
-Ball::Ball() {}
+Ball::~Ball()
+{
+	// The ball can be destructed whilst animating,
+	// that is why we have to free the surface
+	// created by rotozoomSurface here.
+	if ( _image != _sprite )
+	{
+		SDL_FreeSurface(_image);
+	}
+}
 
 void Ball::setColor(Colors color)
 {
-	if ( color == Random )
-		color = BallManager::randomColor();
+	color = (color == Random) ? BallManager::randomColor() : color;
 	_image = BallManager::load(color);
 	_color = color;
 }
 
-void Ball::setOpacity(Uint8 opacity)
-{
-	if ( true || opacity == 0xFF )
-	{
-		if ( _image != _sprite )
-			SDL_FreeSurface(_image);
-		_image = _sprite;
-	}
-	else
-	{
-		_image = change_opacity_of_surface(_sprite, opacity);
-		_opacity = opacity;
-	}
-}
-
 void Ball::draw()
 {
-	if ( isInGrid() )
-	{
-		gridToPos(_grid_x, _grid_y);
-	}
-	else if ( ! isInGrid() && _game->isPaused() )
+	if ( _game->isPaused() || ! visible() )
 		return;
+	//else if ( ! dirty() )
+	//	return;
 	
 	_rect.x = _pos.x();
 	_rect.y = _pos.y();
-		
+	
 	// Make copy because SDL clips the passed rect (or so I think)
 	SDL_Rect cp_rect = _rect;
 	
-	if ( _anim.isRunning())
-	{
-		// Center it to its position
-		int half = BALL_WIDTH / 2 - _image->clip_rect.w / 2;
-		
-		cp_rect.x += half;
-		cp_rect.y += half;
-	}
+	// Center it to its position
+	int half = BALL_WIDTH / 2 - _image->clip_rect.w / 2;	
+	cp_rect.x += half;
+	cp_rect.y += half;
 	
 	SDL_BlitSurface(_image, NULL, _game->buffer(), &cp_rect);
 }
@@ -100,9 +94,9 @@ void Ball::tick()
 	if ( _game->isPaused() )
 		return;
 	
-	if ( ! is_pinned && ! isInGrid() )
+	if ( _state == Moving )
 	{
-		Vector orig_pos(_pos.x(), _pos.y());
+		Vector orig_pos(_pos);
 		
 		Ball *hit;
 		// Break movement into smaller pieces and analyze them
@@ -113,7 +107,7 @@ void Ball::tick()
 			hit = _game->grid()->inCollision(*this);
 			if ( hit ) break;
 		}
-				
+		
 		if ( _pos.y() < 0 || (hit = _game->grid()->inCollision(*this)) )
 		{
 			_pos = orig_pos + _vel * (_game->tdelta() / pieces * (i - 1));
@@ -124,13 +118,13 @@ void Ball::tick()
 			// 2. settle on a grid position with my homies
 			// 3. add myself to Grid (check)
 			
-			is_pinned = true;
+			setState(Pinned);
 			
-			// Remove myself from the void
+			// Remove myself from the empty movement void
 			_game->arrow()->setReady(true);
-			
 			_game->removeSprite(this);
 			
+			// Animate bouncy bounce
 			active();
 			satisfyGrid();
 			
@@ -217,18 +211,23 @@ void Ball::satisfyGrid()
 	_grid_x = x;
 	_grid_y = y;
 	
-	gridToPos(x, y);
+	gridToPos();
 }
 
-void Ball::gridToPos(int x, int y)
+void Ball::gridToPos()
 {	
+	dirty(true);
+	
 	int dd = _game->size()->w / BALL_GRID_W;
 	
-	int pos_x = dd * x + (y % 2 ? 12 : 0);
-	int pos_y = dd * y;
+	int pos_x = dd * _grid_x + (_grid_y % 2 ? 12 : 0);
+	int pos_y = dd * _grid_y;
 	
 	_pos.x(pos_x);
-	_pos.y(pos_y);	
+	_pos.y(pos_y);
+	
+	_rect.x = _pos.x();
+	_rect.y = _pos.y();
 }
 
 bool Ball::collidesWith(Ball &ball)
@@ -242,14 +241,14 @@ void Ball::initFx()
 		return;
 	
 	// Make copy of the ball that we can enlarge
-	SDL_Surface *copy = SDL_DisplayFormatAlpha(_sprite);
-	_image = copy;
+	_image = SDL_DisplayFormatAlpha(_sprite);
 }
 
 void Ball::active()
 {
 	if ( _anim.isRunning() )
 		return;
+	
 	initFx();
 	
 	// Prepare animation

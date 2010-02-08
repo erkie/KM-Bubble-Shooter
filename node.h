@@ -19,8 +19,7 @@ class Node
 {
 protected:
 	SDL_Surface *_image;
-	int _xpos, _ypos;
-	int _w, _h;
+	SDL_Rect _pos;
 	
 	Screen *_screen;
 public:
@@ -29,7 +28,7 @@ public:
 	// Draw myself onto surface
 	virtual void draw(SDL_Surface *surface);
 	
-	bool collidesWith(int x, int y) { return x > _xpos && y > _ypos && x < _xpos + _w && y < _ypos + _h; };
+	bool collidesWith(int x, int y) { return x > _pos.x && y > _pos.y && x < _pos.x + _pos.w && y < _pos.y + _pos.h; };
 	
 	// Events
 	virtual void onclick() {};

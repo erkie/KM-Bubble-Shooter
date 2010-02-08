@@ -21,4 +21,6 @@ bool check_rect_collision(SDL_Rect *rect, int x, int y);
 
 TTF_Font *load_font(int size);
 
+SDL_Rect get_rect_intersection(SDL_Rect one, SDL_Rect two);
+
 #endif

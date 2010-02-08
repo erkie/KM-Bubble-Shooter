@@ -36,7 +36,7 @@ private:
 	
 public:
 	Grid(Game *game);
-	void tick() {};
+	void tick();
 	void draw();
 	
 	// Row handling
@@ -58,7 +58,6 @@ public:
 	void locateGroups(Ball &relativeTo);
 	bool gridListHas(grid_list &, int, int);
 	void search(Ball &ball, ball_list &found);
-	void searchNear(Ball &ball, ball_list &found);
 	void handleDanglies();
 	bool doSearch(Ball &ball, ball_list &found, grid_list &searched, bool recursive, bool use_color);
 };

@@ -58,13 +58,9 @@ void Menu::handleEvent(const SDL_Event &event)
 	{
 		case SDL_MOUSEBUTTONDOWN:
 			if ( event.button.button != SDL_BUTTON_WHEELDOWN && event.button.button != SDL_BUTTON_WHEELUP )
-			{
 				_current_screen->fireEvent(Screen::Down, event);
-			}
 			else
-			{
 				_current_screen->fireEvent(Screen::Scroll, event);
-			}
 
 			break;
 		case SDL_MOUSEMOTION:

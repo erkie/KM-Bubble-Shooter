@@ -16,11 +16,10 @@
 ContinueNode::ContinueNode(Screen *screen): Node(screen)
 {
 	_image = IMG_Load("menu-resume.png");
-	
-	_xpos = 0;
-	_ypos = 10;
-	_w = _image->clip_rect.w;
-	_h = _image->clip_rect.h;
+
+	_pos = _image->clip_rect;
+	_pos.x = 0;
+	_pos.y = 10;
 }
 
 void ContinueNode::onclick()

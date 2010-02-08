@@ -24,10 +24,9 @@ HighscoreNode::HighscoreNode(Screen *screen): Node(screen)
 	color.r = color.g = color.b = 0xFF;
 	_image = TTF_RenderText_Blended(font, "Highscores", color);
 	
-	_xpos = 175;
-	_ypos = 10;
-	_w = _image->clip_rect.w;
-	_h = _image->clip_rect.h;
+	_pos = _image->clip_rect;
+	_pos.x = 175;
+	_pos.y = 10;
 	
 	_screen->addNode(new ScoreScrollNode(_screen));
 }

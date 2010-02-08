@@ -15,10 +15,10 @@
 
 CancelNode::CancelNode(Screen *screen): Node(screen)
 {
-	_xpos = 106;
-	_ypos = 115;
-	_w = 28;
-	_h = 29;
+	_pos.x = 106;
+	_pos.y = 115;
+	_pos.w = 28;
+	_pos.h = 29;
 }
 
 void CancelNode::onclick()

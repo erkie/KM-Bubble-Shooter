@@ -25,10 +25,10 @@ class Ball: public Sprite
 private:
 	SDL_Rect _temp_rect;
 	
-	// _image is the image loaded with all the balls
+	// _image is the image to draw onto the screen
 	SDL_Surface *_image;
 	
-	// _sprite is the image to draw onto the screen
+	// _sprite is the image loaded with all the balls
 	SDL_Surface *_sprite;
 	
 	// _rect is the (dst_rect) rect containing the position of the object
@@ -37,32 +37,40 @@ private:
 	// _sprite_rect is the (src_rect) rect conting the position on the _image
 	SDL_Rect _sprite_rect;
 	
+	// What the hell is the difference between _sprite_rect and _rect!?
+	
 	Vector _pos;
 	
 	int _grid_x, _grid_y;
 	
 	Uint8 _opacity;
 	bool _was_dangly;
+	
+	void initFx();
 public:
-	Ball();
+	enum BallState {Queued, Moving, Pinned};
+	BallState _state;
+	
+	static Ball *create(Game *game);
+	
 	Ball(Game *game);
+	~Ball();
 	
 	enum Colors {Random, Red, Green, Yellow, Blue, Teal, Purple};
 	Colors _color;
 	
 	void setColor(Colors color);
+	void setState(BallState state) { _state = state; };
 	
-	void gridX(int x) { _grid_x = x; };
-	void gridY(int y) { _grid_y = y; };
+	void gridX(int x) { _grid_x = x; gridToPos(); };
+	void gridY(int y) { _grid_y = y; gridToPos(); };
 	
-	int gridX() const { return _grid_x; };
-	int gridY() const { return _grid_y; };
-	
-	void setOpacity(Uint8 opacity);
+	int gridX() { return _grid_x; };
+	int gridY() { return _grid_y; };
 	
 	Vector &pos() { return _pos; };
-	void xPos(double x) { _pos.x(x); };
-	void yPos(double y) { _pos.y(y); };
+	void xPos(double x) { _pos.x(x); _rect.x = x; };
+	void yPos(double y) { _pos.y(y); _rect.y = y; };
 	
 	void wasDangly(bool was) { _was_dangly = was; };
 	bool wasDangly() { return _was_dangly; };
@@ -74,15 +82,12 @@ public:
 	
 	Vector calculateGrid();
 	void satisfyGrid();
-	void gridToPos(int x, int y);
+	void gridToPos();
 	
-	bool isInGrid() { return _grid_x >= 0 && _grid_y >= 0; };
-	bool is_pinned;
 	bool collidesWith(Ball &);
 	
 	void active();
 	void bam();
-	void initFx();
 	
 	Vector _vel;
 	Vector _acc;

@@ -48,3 +48,9 @@ void print_pixel_at(const char *name, SDL_Surface *surface, int x, int y)
 	
 	printf("Pixel Color (%s) -> R: %d,  G: %d,  B: %d,  A: %d\n", name, red, green, blue, alpha);
 }
+
+std::ostream & operator<<(std::ostream &os, const SDL_Rect &r )
+{
+	os << "[SDL_Rect left: " << r.x << ", top: " << r.y << ", right: " << r.x + r.w << ", bottom: " << r.y + r.h <<  ", w: " << r.w << ", h: " << r.h << "]\n";
+	return os;
+}

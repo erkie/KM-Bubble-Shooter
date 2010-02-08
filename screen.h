@@ -40,7 +40,7 @@ public:
 	virtual void draw(SDL_Surface *) = 0;
 	void drawNodes(SDL_Surface *);
 	
-	SDL_Rect makeRect(int x, int y);
+	SDL_Rect makeRect(SDL_Rect r);
 	
 	void fireEvent(Events type, const SDL_Event &event);
 	void fireEvent(Events type);

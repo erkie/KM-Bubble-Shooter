@@ -8,6 +8,7 @@
  */
 
 #include <cstdlib>
+#include <iostream>
 
 #include "SDL_image/SDL_image.h"
 
@@ -50,7 +51,9 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 		SDL_PixelFormat *format = _image->format;
 		SDL_Surface *ball = SDL_CreateRGBSurface(_image->flags,
 												 BALL_WIDTH, BALL_HEIGHT, format->BitsPerPixel,
-												 format->Rmask, format->Gmask, format->Bmask, format->Amask);
+												 format->Rmask, format->Bmask, format->Gmask, format->Amask);
+		//										 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+		//SDL_FillRect(ball, NULL, SDL_MapRGBA(format, 0xFF, 0xFF, 0xFF, 0x00));
 		
 		SDL_Rect rect;
 		rect.y = 0;
@@ -62,6 +65,7 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 			case Ball::Blue:   rect.x = 69; break;
 			case Ball::Teal:   rect.x = 92; break;
 			case Ball::Purple: rect.x = 115; break;
+			default: std::cerr << "Sanity check failed" << std::endl;
 		}
 		
 		draw_transparent_surface_onto_empty_surface(rect, ball, _image);

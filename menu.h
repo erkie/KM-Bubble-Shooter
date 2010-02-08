@@ -40,6 +40,8 @@ public:
 	int centerX() { return _game->size()->w / 2; };
 	int centerY() { return _game->size()->h / 2; };
 	
+	SDL_Surface * overlay() { return _overlay; };
+	
 	HighscoreManager manager;
 };
 

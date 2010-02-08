@@ -35,7 +35,8 @@ private:
 	
 	int _font_height, _height;
 	
-	SDL_Rect _scroll_rect;
+	SDL_Surface *_image;
+	SDL_Rect _scroll_rect, _rect;
 public:
 	ScoreScrollNode(Screen *);
 	void draw(SDL_Surface *);

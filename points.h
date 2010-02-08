@@ -18,15 +18,13 @@
 class Points: public Sprite
 {
 private:
-	SDL_Surface *_image;
 	TTF_Font *_font;
 	SDL_Color _font_color;
-	
-	SDL_Rect _pos;
 	
 	long _last_points;
 public:
 	Points(Game *game);
+	~Points();
 	void tick();
 	void draw();
 	

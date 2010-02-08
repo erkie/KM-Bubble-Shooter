@@ -17,10 +17,10 @@
 
 SubmitNode::SubmitNode(Screen *screen): Node(screen)
 {
-	_xpos = 1;
-	_ypos = 113;
-	_w = 96;
-	_h = 33;
+	_pos.x = 1;
+	_pos.y = 113;
+	_pos.w = 96;
+	_pos.h = 33;
 }
 
 void SubmitNode::onclick()

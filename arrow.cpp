@@ -19,63 +19,51 @@
 
 Arrow::Arrow(Game *game): Sprite(game)
 {
-	_image = IMG_Load("arrow.png");
-	if ( ! _image )
+	_origin = IMG_Load("arrow.png");
+	if ( ! _origin )
 	{
 		std::cerr << "Could not load arrow.png: " << IMG_GetError() << std::endl;
 	}
-	// Create copy of _rotated
-	_rotated = SDL_DisplayFormatAlpha(_image);
+	// Create copy of _origin
+	_image = SDL_DisplayFormatAlpha(_origin);
 	
-	_pos = _image->clip_rect;
-	
+	_pos = _origin->clip_rect;
 	_pos.x = _game->size()->w / 2 - _pos.w / 2;
 	_pos.y = _game->size()->h - BALL_HEIGHT / 2;
 	
-	primeQueue();
+	// Queue balls
+	// Create one more than specified, for the current ball
+	for ( int i = 0; i <= ARROW_QUEUE_SIZE; i++ )
+	{
+		Ball *ball = Ball::create(_game);
+		_queue.push_back(ball);
+	}
+	
+	setCurrent();
+}
+
+
+Arrow::~Arrow()
+{
+	SDL_FreeSurface(_origin);
+	SDL_FreeSurface(_image);
 }
 
 void Arrow::tick()
 {
 	if ( _game->isPaused() )
 		return;
-	_current_ball->tick();
 }
 
 void Arrow::draw()
 {
-	// Rotatate arrow
-	SDL_Rect pos = _pos; // I do know I'm making a copy here, right?
+	//if ( ! dirty() )
+	//	return;
+	if ( _game->isPaused() )
+		return;
 	
-	// Adjust position to center
-	pos.x -= _rotated->clip_rect.w / 2;
-	pos.y -= _rotated->clip_rect.h / 2;
-	
-	// Draw arrow
-	SDL_BlitSurface(_rotated, &_rotated->clip_rect, _game->buffer(), &pos);
-	
-	// Balls
-	//
-	Vector ballpos(0, 40);
-	ballpos.angle(-(_angle + 90));
-	
-	_current_ball->xPos(_game->size()->w / 2 - BALL_WIDTH / 2 - _pos.w / 2 + ballpos.x());
-	_current_ball->yPos(_game->size()->h - BALL_HEIGHT + ballpos.y());
-	
-	_current_ball->draw();
-	
-	// Draw queue
-	int i = -1;
-	for ( ball_queue::iterator iter = _queue.begin(); iter != _queue.end(); iter++ )
-	{
-		if ( ++i >= _game->lives() )
-			continue;
-		Ball *ball = (*iter);
-		int w = ball->size()->w;
-		ball->xPos((w * ARROW_QUEUE_SIZE + 10) - i * w);
-		ball->yPos(_game->size()->h - w - 10);
-		ball->draw();
-	}
+	SDL_Rect pos = _rect; // Make copy for SDL clipping goodness
+	SDL_BlitSurface(_image, NULL, _game->buffer(), &pos);
 }
 
 void Arrow::handleEvent(const SDL_Event &event)
@@ -93,13 +81,14 @@ void Arrow::handleEvent(const SDL_Event &event)
 			_mouse_pos.y(event.motion.y);
 			
 			rotateToMouse();
-			
 			break;
 	}
 }
 
 void Arrow::rotateToMouse()
 {
+	////
+	// Position and rotate arrow
 	Vector v(_pos.x, _pos.y);
 	
 	// Add 90 to the angle so we are working in line with the bottom axis
@@ -113,37 +102,49 @@ void Arrow::rotateToMouse()
 	// Remove the 90 again to rotate correctly
 	_angle = ang - 90;
 	
-	SDL_FreeSurface(_rotated);
-	_rotated = rotozoomSurface(_image, _angle, 1, 1);
-}
-
-void Arrow::primeQueue()
-{
-	// Queue balls
-	// Create one more than specified, for the current ball
-	for ( int i = 0; i <= ARROW_QUEUE_SIZE; i++ )
-	{
-		Ball* ball = new Ball(_game);
-		ball->setOpacity(ARROW_BALL_OPACITY);
-		_queue.push_back(ball);
-	}
+	SDL_FreeSurface(_image);
+	_image = rotozoomSurface(_origin, _angle, 1, 1);
 	
-	setCurrent();
+	// Adjust position to center
+	_rect = _image->clip_rect;
+	_rect.x = _pos.x - _image->clip_rect.w / 2;
+	_rect.y = _pos.y - _image->clip_rect.h / 2;
+	
+	////
+	// Position balls
+	Vector ballpos(0, 40);
+	ballpos.angle(-(_angle + 90));
+	
+	_current_ball->xPos(_game->size()->w / 2 - BALL_WIDTH / 2 - _pos.w / 2 + ballpos.x());
+	_current_ball->yPos(_game->size()->h - BALL_HEIGHT + ballpos.y());
+	
+	// Queue balls
+	int i = 0;
+	for ( ball_queue::iterator iter = _queue.begin(); iter != _queue.end(); iter++, i++ )
+	{
+		Ball *ball = (*iter);
+		int w = ball->size()->w;
+		ball->xPos((w * ARROW_QUEUE_SIZE + 10) - i * w);
+		ball->yPos(_game->size()->h - w - 10);
+	}
 }
 
 void Arrow::setCurrent()
 {
+	// Create new ball
 	_current_ball = _queue.front();
-	_current_ball->is_pinned = true;
+	_current_ball->setState(Ball::Queued);
 	_current_ball->_vel.angle(-1 * (_angle + 90));
-	_current_ball->setOpacity(0xFF);
 	_current_ball->active();
+	
 	_queue.remove(_current_ball);
 	
 	// Add to end
-	Ball* b = new Ball(_game);
-	b->setOpacity(ARROW_BALL_OPACITY);
+	Ball* b = Ball::create(_game);
 	_queue.push_back(b);
+	
+	// Rotate current ball to mouse position angle
+	rotateToMouse();
 }
 
 void Arrow::release()
@@ -151,11 +152,8 @@ void Arrow::release()
 	if ( ! isReady() )
 		return;
 	
-	_current_ball->is_pinned = false;
-	_game->addSprite(_current_ball);
+	_current_ball->setState(Ball::Moving);
 	setReady(false);
 	
 	setCurrent();
 }
-
-Arrow::~Arrow() {}

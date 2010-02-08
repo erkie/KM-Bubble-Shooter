@@ -12,24 +12,19 @@
 #include "game.h"
 #include "grid.h"
 
-Grid::Grid(Game *game): Sprite(game), _remove_top(NULL)
-{
-	
-}
+Grid::Grid(Game *game): Sprite(game), _remove_top(NULL) {}
 
-void Grid::draw()
-{	
-	// Draw my balls
-	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ ) {
-		(**iter).draw();
-		(**iter).tick();
-	}
+void Grid::tick()
+{
+	if ( _game->isPaused() )
+		return;
+	
+	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ )
+		(*iter)->tick();
 	
 	// Draw removable balls
-	for ( ball_list::iterator iter = _remove_list.begin(); iter != _remove_list.end(); iter++ ) {
-		(**iter).draw();
-		(**iter).tick();
-	}
+	for ( ball_list::iterator iter = _remove_list.begin(); iter != _remove_list.end(); iter++ )
+		(*iter)->tick();
 	
 	if ( ! _remove_top )
 	{
@@ -43,13 +38,10 @@ void Grid::draw()
 		{
 			_game->startPointsAdding();
 		}
-
 	}
 	
-	// If we successfully added something to the top or if previously had something
 	if ( _remove_top )
 	{
-		_remove_top->draw();
 		_remove_top->tick();
 		if ( ! _remove_top->_anim.isRunning() )
 		{
@@ -57,11 +49,29 @@ void Grid::draw()
 				_game->addPointsJumbo();
 			else
 				_game->addPointsNormal();
-
+			
 			removeBall(_remove_top);
 			_remove_top = NULL;
 		}
 	}
+}
+
+void Grid::draw()
+{
+	if ( _game->isPaused() )
+		return;
+	
+	// Draw my balls
+	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ )
+		(*iter)->draw();
+	
+	// Draw removable balls
+	for ( ball_list::iterator iter = _remove_list.begin(); iter != _remove_list.end(); iter++ )
+		(*iter)->draw();
+	
+	// Draw animated *bam*
+	if ( _remove_top )
+		_remove_top->draw();
 }
 
 void Grid::removeBall(Ball *ball)
@@ -103,6 +113,7 @@ void Grid::generateRow(int rows = 1)
 		for ( int x = 0; x < BALL_GRID_W; x++ )
 		{
 			Ball *ball = new Ball(_game);
+			ball->setState(Ball::Pinned);
 			ball->gridX(x);
 			ball->gridY(y);
 		
@@ -171,13 +182,9 @@ void Grid::locateGroups(Ball &relativeTo)
 	search(relativeTo, found);
 	
 	if ( found.size() >= ADJACENT_BALLS )
-	{
 		removeBalls(found);
-	}
 	else
-	{
 		_game->decrementLives();
-	}
 
 }
 
@@ -189,12 +196,6 @@ void Grid::search(Ball &ball, ball_list &result)
 	// Delete everything in searched list
 	for ( grid_list::iterator iter = searched.begin(); iter != searched.end(); iter++ )
 		delete *iter;
-}
-
-void Grid::searchNear(Ball &ball, ball_list &result)
-{
-	grid_list searched;
-	doSearch(ball, result, searched, false, false);
 }
 
 void Grid::handleDanglies()
@@ -211,6 +212,9 @@ void Grid::handleDanglies()
 		{
 			islands.push_back(result);
 		}
+		else
+			delete result;
+
 	}
 	
 	for ( island_list::iterator iter = islands.begin(); iter != islands.end(); iter++ )

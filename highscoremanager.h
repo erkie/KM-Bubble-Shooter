@@ -16,7 +16,7 @@
 
 #include "SDL.h"
 
-const long HIGHSCORES_SAVED = 30;
+const long HIGHSCORES_SAVED = 50;
 
 struct Highscore
 {

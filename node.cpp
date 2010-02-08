@@ -13,7 +13,7 @@
 #include "node.h"
 
 void Node::draw(SDL_Surface *surface)
-{
-	SDL_Rect rect = _screen->makeRect(_xpos, _ypos);
+{	
+	SDL_Rect rect = _screen->makeRect(_pos);
 	SDL_BlitSurface(_image, NULL, surface, &rect);
 }

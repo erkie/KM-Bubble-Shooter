@@ -23,7 +23,7 @@
 
 #include "highscorescreen.h"
 
-HighscoreScreen::HighscoreScreen(Menu *menu): Screen(menu)
+HighscoreScreen::HighscoreScreen(Menu *menu): Screen(menu), _points(NULL)
 {
 	for ( int i = 0; i < 40; i++ )
 		_name[i] = '\0';
@@ -72,6 +72,9 @@ void HighscoreScreen::draw(SDL_Surface *surface)
 
 void HighscoreScreen::renderPointsText()
 {
+	if ( _points )
+		SDL_FreeSurface(_points);
+	
 	std::stringstream text;
 	text << _menu->game()->lastPoints();
 	text << " points!";

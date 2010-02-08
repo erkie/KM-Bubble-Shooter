@@ -17,13 +17,14 @@
 using std::fstream;
 using std::ofstream;
 
-HighscoreManager::HighscoreManager()
-{
-	
-}
+HighscoreManager::HighscoreManager() {}
 
 void HighscoreManager::load()
 {
+	// First we clear all old scores
+	for ( highscore_list::iterator iter = _scores.begin(); iter != _scores.end(); iter++ )
+		delete (*iter);
+	
 	fstream fs("scores", fstream::in);
 	
 	if ( fs.is_open() )
@@ -62,12 +63,19 @@ void HighscoreManager::add(Highscore &score)
 {
 	Highscore *s = new Highscore;
 	*s = score;
+	
 	_scores.push_back(s);
 	
 	_scores.sort(comp_highscore);
 	
 	if ( _scores.size() >= HIGHSCORES_SAVED )
+	{
+		// Remove last score
+		Highscore *old = _scores.back();
 		_scores.pop_back();
+		
+		delete old;
+	}
 }
 
 bool HighscoreManager::isHighscore(long score)
@@ -77,10 +85,9 @@ bool HighscoreManager::isHighscore(long score)
 	
 	_scores.sort(comp_highscore);
 	highscore_list::iterator iter = _scores.begin();
-	advance(iter, HIGHSCORES_SAVED);
+	advance(iter, HIGHSCORES_SAVED - 1); // Go to last score
 	
 	if ( score > (*iter)->score )
 		return true;
-	
 	return false;
 }

@@ -31,8 +31,7 @@ class Arrow: public Sprite
 	
 	Ball *_current_ball;
 	
-	SDL_Surface *_image;
-	SDL_Surface *_rotated;
+	SDL_Surface *_origin;
 	SDL_Rect _pos;
 	Vector _mouse_pos;
 	double _angle;
@@ -48,7 +47,6 @@ public:
 	
 	void rotateToMouse();
 	
-	void primeQueue();
 	void setCurrent();
 	void release();
 	
