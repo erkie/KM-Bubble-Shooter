@@ -50,6 +50,8 @@ public:
 	void setCurrent();
 	void release();
 	
+	Ball* createBall();
+	
 	bool isReady() const { return _is_ready; };
 	void setReady(bool ready) { _is_ready = ready; };
 };

@@ -136,7 +136,7 @@ void ScoreScrollNode::renderText()
 	iter = _scores.begin() + start_score;
 	to = _scores.begin() + end_score;
 	
-	for (; iter != to; iter++ )
+	for (; iter != to; iter++)
 	{
 		SDL_Surface **surfaces = (*iter);
 		

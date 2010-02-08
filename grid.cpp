@@ -214,7 +214,6 @@ void Grid::handleDanglies()
 		}
 		else
 			delete result;
-
 	}
 	
 	for ( island_list::iterator iter = islands.begin(); iter != islands.end(); iter++ )

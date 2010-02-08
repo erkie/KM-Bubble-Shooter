@@ -34,14 +34,10 @@ Arrow::Arrow(Game *game): Sprite(game)
 	// Queue balls
 	// Create one more than specified, for the current ball
 	for ( int i = 0; i <= ARROW_QUEUE_SIZE; i++ )
-	{
-		Ball *ball = Ball::create(_game);
-		_queue.push_back(ball);
-	}
+		_queue.push_back(Ball::create(_game));
 	
 	setCurrent();
 }
-
 
 Arrow::~Arrow()
 {
@@ -53,12 +49,19 @@ void Arrow::tick()
 {
 	if ( _game->isPaused() )
 		return;
+	
+	int i = 0;
+	for ( ball_queue::iterator iter = _queue.begin(); iter != _queue.end(); iter++, i++ )
+	{
+		if ( i >= _game->lives() )
+			(*iter)->visible(false);
+		else
+			(*iter)->visible(true);
+	}
 }
 
 void Arrow::draw()
 {
-	//if ( ! dirty() )
-	//	return;
 	if ( _game->isPaused() )
 		return;
 	
