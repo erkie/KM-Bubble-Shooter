@@ -23,21 +23,8 @@ const int BALL_HEIGHT = 23;
 class Ball: public Sprite
 {
 private:
-	SDL_Rect _temp_rect;
-	
-	// _image is the image to draw onto the screen
-	SDL_Surface *_image;
-	
-	// _sprite is the image loaded with all the balls
+	// _sprite is the original ball image, not changed by animations.
 	SDL_Surface *_sprite;
-	
-	// _rect is the (dst_rect) rect containing the position of the object
-	SDL_Rect _rect;
-	
-	// _sprite_rect is the (src_rect) rect conting the position on the _image
-	SDL_Rect _sprite_rect;
-	
-	// What the hell is the difference between _sprite_rect and _rect!?
 	
 	Vector _pos;
 	
@@ -58,6 +45,7 @@ public:
 	
 	enum Colors {Random, Red, Green, Yellow, Blue, Teal, Purple};
 	Colors _color;
+	Colors color() { return _color; };
 	
 	void setColor(Colors color);
 	void setState(BallState state) { _state = state; };
@@ -75,7 +63,7 @@ public:
 	void wasDangly(bool was) { _was_dangly = was; };
 	bool wasDangly() { return _was_dangly; };
 	
-	SDL_Rect *size() { return &_sprite_rect; };
+	SDL_Rect *size() { return &_rect; };
 	
 	void tick();
 	void draw();

@@ -35,11 +35,8 @@ Ball* Ball::create(Game *game)
 Ball::Ball(Game *game): Sprite(game), _was_dangly(false), _state(Queued)
 {
 	setColor(Random);
-	_sprite = _image;
 	
 	_rect = _image->clip_rect;
-	_sprite_rect.w = BALL_WIDTH;
-	_sprite_rect.h = BALL_HEIGHT;
 	
 	_vel.x(0);
 	_vel.y(_game->size()->h * 2);
@@ -66,6 +63,7 @@ void Ball::setColor(Colors color)
 	color = (color == Random) ? BallManager::randomColor() : color;
 	_image = BallManager::load(color);
 	_color = color;
+	_sprite = _image;
 }
 
 void Ball::draw()
@@ -150,18 +148,18 @@ void Ball::tick()
 			
 			play_ball_bounce();
 		}
-		else if ( _pos.x() + _sprite_rect.w > size->w )
+		else if ( _pos.x() + _rect.w > size->w )
 		{
 			_vel._x *= -1;
-			_pos.x(size->w - _sprite_rect.w);
+			_pos.x(size->w - _rect.w);
 			
 			play_ball_bounce();
 		}
 
-		if ( _pos.y() + _sprite_rect.h > size->h )
+		if ( _pos.y() + _rect.h > size->h )
 		{
 			_vel._y *= -1;
-			_pos.y(size->h - _sprite_rect.h);
+			_pos.y(size->h - _rect.h);
 
 			play_ball_bounce();
 		}
@@ -186,8 +184,8 @@ Vector Ball::calculateGrid()
 {
 	int grid_size = _game->size()->w / BALL_GRID_W;
 	
-	int center_x = _pos.y() + _sprite_rect.h / 2;
-	int center_y = _pos.x() + _sprite_rect.w / 2;
+	int center_x = _pos.y() + _rect.h / 2;
+	int center_y = _pos.x() + _rect.w / 2;
 	
 	// These calculated are the idealised (where I really am) x/y-grid positions
 	int y = center_x / grid_size;
