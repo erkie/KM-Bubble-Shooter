@@ -21,6 +21,7 @@ const int GAME_FPS = 50;
 const int PAUSE_FPS = 50;
 const int ADJACENT_BALLS = 3;
 const int GAME_LIVES = 6;
+const int GAME_RECORD_FRAMES = GAME_FPS * 30; // 30 seconds
 
 class Grid;
 class Arrow;
@@ -79,6 +80,18 @@ private:
 	bool _is_paused;
 	
 	int _volume;
+	
+	// Recording (debugging)
+	bool _is_recording, _is_playing;
+	int _current_frame, _play_frame;
+	SDL_Surface *_rec_frames[GAME_RECORD_FRAMES];
+	SDL_Surface *_playing, *_recording;
+	void rec();
+	void recStart();
+	void recEnd();
+	void recPlay();
+	void recStop();
+	void recFrame();
 public:
 	Game();
 	Game(SDL_Surface* screen);

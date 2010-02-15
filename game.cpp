@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include "SDL_mixer/SDL_mixer.h"
+#include "SDL_image/SDL_image.h"
 
 #include "sound.h"
 #include "game.h"
@@ -29,6 +30,7 @@ Game::Game()
 }
 
 Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0), _is_paused(false), _is_dirty(false), _volume(MIX_MAX_VOLUME * 0.6)
+	, _is_recording(false), _is_playing(false)
 {	
 	_size = &_screen->clip_rect;
 	
@@ -57,7 +59,12 @@ Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _l
 	// Begin game
 	reset();
 	
-	addDirtyRect(screen->clip_rect);
+	// Recording
+	_recording = IMG_Load("recording.png");
+	_playing = IMG_Load("playing.png");
+	
+	for ( int i = 0; i < GAME_RECORD_FRAMES; i++ )
+		_rec_frames[i] = NULL;
 }
 
 void Game::start()
@@ -190,6 +197,10 @@ void Game::handleEvents()
 					_volume += 10;
 					Mix_Volume(-1, _volume);
 				}
+				else if ( _event.key.keysym.sym == SDLK_r )
+					recStart();
+				else if ( _event.key.keysym.sym == SDLK_t )
+					recPlay();
 
 				break;
 			case SDL_QUIT:
@@ -202,15 +213,31 @@ void Game::handleEvents()
 
 void Game::draw()
 {	
-	for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
-		(**iter).draw();
+	if ( _is_playing )
+		recFrame();
+	else
+		for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
+			(**iter).draw();
+	
+	rec();
+	
+	if ( _is_recording || _is_playing )
+	{
+		SDL_Rect place;
+		place.x = _buffer->clip_rect.w - 70;
+		place.y = _buffer->clip_rect.h - 70;
+		if ( _is_recording )
+			SDL_BlitSurface(_recording, NULL, _buffer, &place);
+		else
+			SDL_BlitSurface(_playing, NULL, _buffer, &place);
+	}
 	
 	SDL_BlitSurface(_buffer, &_buffer->clip_rect, _screen, &_screen->clip_rect);
 	SDL_Flip(_screen);
 }
 
 void Game::tick()
-{
+{	
 	handleEvents();
 	
 	// Tick each sprite
@@ -294,6 +321,73 @@ void Game::addPointsNormal()
 void Game::addPointsJumbo()
 {
 	_points += 100;
+}
+
+void Game::rec()
+{
+	if ( ! _is_recording )
+		return;
+	
+	_current_frame++;
+	
+	if ( _current_frame >= GAME_RECORD_FRAMES )
+		recEnd();
+	else
+	{
+		_rec_frames[_current_frame] = SDL_DisplayFormat(_buffer);
+	}
+}
+
+void Game::recStart()
+{
+	std::cout << "Start recording" << std::endl;
+	
+	// Clear old recordings
+	for ( int i = 0; i < GAME_RECORD_FRAMES; i++ )
+	{
+		SDL_FreeSurface(_rec_frames[i]);
+		_rec_frames[i] = NULL;
+	}
+	
+	_is_recording = true;
+	_current_frame = 0;
+	
+	for ( int i = 0; i < GAME_RECORD_FRAMES; i++ )
+		_rec_frames[i] = NULL;
+}
+
+void Game::recEnd()
+{
+	std::cout << "End recording" << std::endl;
+	
+	_is_recording = false;
+}
+
+void Game::recPlay()
+{
+	std::cout << "Starting playback" << std::endl;
+	
+	_is_playing = true;
+	_play_frame = 0;
+}
+
+void Game::recStop()
+{
+	std::cout << "Ended playback\n";
+	
+	_is_playing = false;
+}
+
+void Game::recFrame()
+{
+	_play_frame++;
+	
+	if ( _play_frame >= GAME_RECORD_FRAMES )
+		recStop();
+	else
+	{
+		SDL_BlitSurface(_rec_frames[_play_frame], NULL, _buffer, NULL);
+	}
 }
 
 Game::~Game()
