@@ -9,6 +9,9 @@
 
 #include <list>
 
+#include "ballmanager.h"
+
+#include "arrow.h"
 #include "game.h"
 #include "grid.h"
 
@@ -79,6 +82,8 @@ void Grid::removeBall(Ball *ball)
 	_game->removeSprite(ball);
 	delete ball;
 	
+	_game->arrow()->checkQueueColors();
+	
 	if ( _balls.size() == 0 )
 	{
 		_game->win();
@@ -102,10 +107,15 @@ void Grid::removeBalls(ball_list &balls)
 		_balls.remove(*iter);
 		_remove_list.push_back(*iter);
 	}
+	
+	// We have to make sure that every color
+	// in the queue actually exists on the field
+	BallManager::prepRemList(this);
 }
 
-void Grid::generateRow(int rows = 1)
+void Grid::generateRow(int rows = 1, bool is_startrow = false)
 {
+	// Move old balls up a Y-coordinate
 	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ )
 		(**iter).gridY((**iter).gridY() + rows);
 	
@@ -113,6 +123,8 @@ void Grid::generateRow(int rows = 1)
 		for ( int x = 0; x < BALL_GRID_W; x++ )
 		{
 			Ball *ball = new Ball(_game);
+			if ( ! is_startrow )
+				ball->setRemainingColor();
 			ball->setState(Ball::Pinned);
 			ball->gridX(x);
 			ball->gridY(y);
@@ -123,7 +135,7 @@ void Grid::generateRow(int rows = 1)
 
 void Grid::generateStartRows()
 {
-	generateRow(BALL_GRID_H / 2);
+	generateRow(BALL_GRID_H / 2, true);
 }
 
 int Grid::countRows()
@@ -209,9 +221,7 @@ void Grid::handleDanglies()
 	{
 		ball_list *result = new ball_list;
 		if ( doSearch((**iter), *result, searched, true, false) )
-		{
 			islands.push_back(result);
-		}
 		else
 			delete result;
 	}

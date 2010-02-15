@@ -41,13 +41,16 @@ public:
 	Arrow(Game *game);
 	~Arrow();
 	
+	void prepareQueue();
+	
 	void tick();
 	void draw();
 	void handleEvent(const SDL_Event &event);
 	
 	void rotateToMouse();
 	
-	void setCurrent();
+	void checkQueueColors();
+	void setCurrent(bool is_in_game = false);
 	void release();
 	
 	Ball* createBall();

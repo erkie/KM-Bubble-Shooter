@@ -37,12 +37,25 @@ Arrow::Arrow(Game *game): Sprite(game)
 		_queue.push_back(Ball::create(_game));
 	
 	setCurrent();
+	//prepareQueue();
+	
+	//std::cout << "Current color is " << Ball::getC(_current_ball->color()) << std::endl;
 }
 
 Arrow::~Arrow()
 {
 	SDL_FreeSurface(_origin);
 	SDL_FreeSurface(_image);
+}
+
+void Arrow::prepareQueue()
+{
+	// Queue balls
+	// Create one more than specified, for the current ball
+	for ( int i = 0; i <= ARROW_QUEUE_SIZE; i++ )
+		_queue.push_back(Ball::create(_game));
+	
+	setCurrent();	
 }
 
 void Arrow::tick()
@@ -97,7 +110,7 @@ void Arrow::rotateToMouse()
 	// Add 90 to the angle so we are working in line with the bottom axis
 	double ang = v.angleSeparating(_mouse_pos) + 90;
 	
-	// Ensure angle is not out of bounds. No max/min-function?
+	// Ensure angle is not out of bounds. What, no max/min-function?
 	ang = (ang < MIN_ANGLE) ? MIN_ANGLE : ((ang > MAX_ANGLE) ? MAX_ANGLE : ang);
 	
 	_current_ball->_vel.angle(-ang);
@@ -132,9 +145,12 @@ void Arrow::rotateToMouse()
 	}
 }
 
-void Arrow::setCurrent()
+void Arrow::setCurrent(bool is_in_game)
 {
-	// Create new ball
+	// Set new current ball by setting the front
+	// of the queue to _current_ball and then 
+	// removing it from the queue. This means that
+	// The active ball is flushed into space
 	_current_ball = _queue.front();
 	_current_ball->setState(Ball::Queued);
 	_current_ball->_vel.angle(-1 * (_angle + 90));
@@ -144,10 +160,22 @@ void Arrow::setCurrent()
 	
 	// Add to end
 	Ball* b = Ball::create(_game);
+	if ( is_in_game )
+		b->setRemainingColor();
 	_queue.push_back(b);
 	
 	// Rotate current ball to mouse position angle
 	rotateToMouse();
+}
+
+void Arrow::checkQueueColors()
+{
+	// Only the ones not visible should be checked.
+	// Because the not visible ones are not technically part
+	// of the queue. Maybe the queue should be of variable size?
+	for ( ball_queue::iterator iter = _queue.begin(); iter != _queue.end(); iter++ )
+		if ( ! (*iter)->visible() )
+			(*iter)->ensureColorExists();
 }
 
 void Arrow::release()
@@ -158,5 +186,5 @@ void Arrow::release()
 	_current_ball->setState(Ball::Moving);
 	setReady(false);
 	
-	setCurrent();
+	setCurrent(true);
 }

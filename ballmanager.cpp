@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 
 #include "SDL_image/SDL_image.h"
 
@@ -19,11 +20,12 @@
 
 SDL_Surface *BallManager::_image = NULL;
 SDL_Surface *BallManager::_balls[BALLMANAGER_COLORS] = {NULL, NULL, NULL, NULL, NULL, NULL};
+std::vector<Ball::Colors> BallManager::_available = std::vector<Ball::Colors>();
 
 SDL_Surface *BallManager::load(Ball::Colors color)
 {
 	// Load first image
-	if ( ! _image )
+	if ( _image == NULL )
 	{
 		SDL_Surface * image = IMG_Load("ball.png");
 		if ( ! image )
@@ -45,7 +47,7 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 	
 	// Create single image (if needed)
 	int index = color - 1;
-	if ( ! _balls[index] )
+	if ( _balls[index] == NULL )
 	{
 		// Make copy of the ball that we can enlarge
 		SDL_PixelFormat *format = _image->format;
@@ -70,6 +72,8 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 		
 		draw_transparent_surface_onto_empty_surface(rect, ball, _image);
 		
+		std::cout << Ball::getC(color) << " " << ball << std::endl;
+		
 		_balls[index] = ball;
 	}
 	
@@ -82,4 +86,28 @@ Ball::Colors BallManager::randomColor()
 	int random = rand() % 6 + 1;
 	color = (Ball::Colors)random;
 	return color;
+}
+
+void BallManager::prepRemList(Grid *grid)
+{
+	// Clear old availables list
+	_available.erase(_available.begin(), _available.end());
+	
+	ball_list balls = grid->balls();
+	for ( ball_list::iterator iter = balls.begin(); iter != balls.end(); iter++ )
+		if ( count(_available.begin(), _available.end(), (*iter)->color()) == 0 )
+			_available.push_back((*iter)->color());
+}
+
+Ball::Colors BallManager::randomRemainingColor(Grid *grid)
+{
+	prepRemList(grid);
+	
+	std::random_shuffle(_available.begin(), _available.end());
+	return _available.front();
+}
+
+bool BallManager::colorExists(Ball::Colors check)
+{
+	return count(_available.begin(), _available.end(), check);
 }

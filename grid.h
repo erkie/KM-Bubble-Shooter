@@ -23,10 +23,11 @@ public:
 	int x, y;
 };
 
+typedef std::list<Ball*> ball_list;
+
 class Grid: public Sprite
 {
 private:
-	typedef std::list<Ball*> ball_list;
 	typedef std::list<GridPos*> grid_list;
 	
 	ball_list _balls;
@@ -43,7 +44,8 @@ public:
 	void removeBall(Ball *ball);
 	void addBall(Ball *ball);
 	void removeBalls(ball_list &balls);
-	void generateRow(int rows);
+	void generateRow(int rows) { generateRow(rows, false); };
+	void generateRow(int rows, bool is_startrow);
 	void generateStartRows();
 	int countRows();
 	void emptyRows();
@@ -60,6 +62,8 @@ public:
 	void search(Ball &ball, ball_list &found);
 	void handleDanglies();
 	bool doSearch(Ball &ball, ball_list &found, grid_list &searched, bool recursive, bool use_color);
+	
+	ball_list& balls() { return _balls; };
 };
 
 #endif

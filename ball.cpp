@@ -61,9 +61,22 @@ Ball::~Ball()
 void Ball::setColor(Colors color)
 {
 	color = (color == Random) ? BallManager::randomColor() : color;
-	_image = BallManager::load(color);
+	_image = _sprite = BallManager::load(color);
 	_color = color;
-	_sprite = _image;
+}
+
+void Ball::setRemainingColor()
+{
+	setColor(BallManager::randomRemainingColor(_game->grid()));
+}
+
+void Ball::ensureColorExists()
+{
+	if ( ! BallManager::colorExists(_color) )
+	{
+		setRemainingColor();
+		active();
+	}
 }
 
 void Ball::draw()
@@ -168,6 +181,12 @@ void Ball::tick()
 	
 	if ( _anim.isRunning() )
 	{
+		if ( _image == _sprite )
+		{
+			std::cout << "Failed sanity check! And I'm a ";
+			printC(_color);
+			std::cout << std::endl;
+		}
 		SDL_FreeSurface(_image);
 		_image = rotozoomSurface(_sprite, 1, _anim.step(), 1);
 		
@@ -279,5 +298,5 @@ double active_transition(double x)
 
 double bam_transition(double x)
 {
-	return 1 + x * 0.5;
+	return 1 + x;
 };

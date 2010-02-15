@@ -10,6 +10,8 @@
 #ifndef __BALL_H__
 #define __BALL_H__
 
+#include <iostream>
+
 #include "sprite.h"
 #include "vector.h"
 #include "fx.h"
@@ -47,7 +49,27 @@ public:
 	Colors _color;
 	Colors color() { return _color; };
 	
+	static const char* getC(Colors c) {
+		switch (c) {
+			case Red: return "Red"; break;
+			case Green: return "Green"; break;
+			case Yellow: return "Yellow"; break;
+			case Blue: return "Blue"; break;
+			case Teal: return "Teal"; break;
+			case Purple: return "Purple"; break;
+			case Random: return "Random!"; break;
+			default: return "wtf"; break;
+		}
+	}
+	
+	static void printC(Colors c) {
+		std::cout << getC(c);
+	};
+	
 	void setColor(Colors color);
+	void setRemainingColor();
+	void ensureColorExists();
+	
 	void setState(BallState state) { _state = state; };
 	
 	void gridX(int x) { _grid_x = x; gridToPos(); };
