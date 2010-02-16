@@ -21,17 +21,18 @@ class Screen;
 class InputNode: public Node
 {
 private:
-	SDL_Surface *_text;
-	TTF_Font *_font;
+	SDL_Surface *_cursor;
+	SDL_Rect _cursor_rect;
 	
+	TTF_Font *_font;
 	SDL_Color _foreground;
 	
 	Uint16 _str[40];
 	int _curr_index;
 public:
 	InputNode(Screen *screen);
-	void renderText();
 	void draw(SDL_Surface *);
+	void renderText();
 	void onclick();
 	void ontype(Uint16, SDLKey);
 	void submit();

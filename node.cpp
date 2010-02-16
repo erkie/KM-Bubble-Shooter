@@ -12,8 +12,14 @@
 #include "screen.h"
 #include "node.h"
 
+Node::Node(Screen *screen): _screen(screen), _image(NULL)
+{
+	_scroll.x = _scroll.y = 0;
+	_scroll.w = _scroll.h = -1; // I think this means the entire surface. It works atleast...
+}
+
 void Node::draw(SDL_Surface *surface)
 {	
 	SDL_Rect rect = _screen->makeRect(_pos);
-	SDL_BlitSurface(_image, NULL, surface, &rect);
+	SDL_BlitSurface(_image, &_scroll, surface, &rect);
 }

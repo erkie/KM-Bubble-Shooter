@@ -33,8 +33,23 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 	{
 		case Down:
 			{
+				// Get focused node
 				Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
+				// If it isn't the current node the old focused node is blurred
+				if ( node != _focus_node && _focus_node != NULL )
+				{
+					_focus_node->focus(false);
+					_focus_node->onblur();
+				}
+				// If focus_node is NULL empty space was clicked
 				_focus_node = (node) ? node : NULL;
+				// Focus event
+				if ( _focus_node )
+				{
+					_focus_node->focus(true);
+					_focus_node->onfocus();
+				}
+				
 				_is_dragging = true;
 			}
 			break;
