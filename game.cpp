@@ -197,10 +197,10 @@ void Game::handleEvents()
 					_volume += 10;
 					Mix_Volume(-1, _volume);
 				}
-				else if ( _event.key.keysym.sym == SDLK_r )
+				/*else if ( _event.key.keysym.sym == SDLK_r )
 					recStart();
 				else if ( _event.key.keysym.sym == SDLK_t )
-					recPlay();
+					recPlay();*/
 
 				break;
 			case SDL_QUIT:
@@ -237,7 +237,7 @@ void Game::draw()
 }
 
 void Game::tick()
-{	
+{
 	handleEvents();
 	
 	// Tick each sprite
