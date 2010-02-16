@@ -142,6 +142,7 @@ void InputNode::ontype(Uint16 code, SDLKey k)
 	}
 	else if ( k == SDLK_RETURN )
 	{
+		onblur(); // this shouldn't be here, or is it okey?
 		submit();
 		return;
 	}
@@ -153,6 +154,16 @@ void InputNode::ontype(Uint16 code, SDLKey k)
 	((HighscoreScreen*)_screen)->name(_str);
 	
 	renderText();
+}
+
+void InputNode::onfocus()
+{
+	_screen->menu()->game()->holdKeyEvents(true);
+}
+
+void InputNode::onblur()
+{
+	_screen->menu()->game()->holdKeyEvents(false);
 }
 
 void InputNode::submit()

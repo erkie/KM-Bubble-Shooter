@@ -62,6 +62,9 @@ private:
 	// This flag will be set to true if anything has been removed from the sprites list
 	bool _is_dirty;
 	
+	// This flag indicates whether Game can use keyevents (such as the user pressing p for pause) or not
+	bool _hold_key_events;
+	
 	Grid *_grid;
 	Arrow *_arrow;
 	Background *_background;
@@ -81,7 +84,7 @@ private:
 	
 	int _volume;
 	
-	// Recording (debugging)
+	// Recording (debug)
 	bool _is_recording, _is_playing;
 	int _current_frame, _play_frame;
 	SDL_Surface *_rec_frames[GAME_RECORD_FRAMES];
@@ -102,6 +105,8 @@ public:
 	void togglePause();
 	void pause();
 	bool isPaused() const { return _is_paused; };
+	
+	void holdKeyEvents(bool s) { _hold_key_events = s; };
 	
 	SDL_Surface *buffer() { return _buffer;	};
 	SDL_Rect *size() { return _size; };

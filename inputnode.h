@@ -35,6 +35,8 @@ public:
 	void renderText();
 	void onclick();
 	void ontype(Uint16, SDLKey);
+	void onfocus();
+	void onblur();
 	void submit();
 };
 

@@ -30,7 +30,7 @@ Game::Game()
 }
 
 Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0), _is_paused(false), _is_dirty(false), _volume(MIX_MAX_VOLUME * 0.6)
-	, _is_recording(false), _is_playing(false)
+	, _is_recording(false), _is_playing(false), _hold_key_events(false)
 {	
 	_size = &_screen->clip_rect;
 	
@@ -174,7 +174,7 @@ void Game::handleEvents()
 		switch ( _event.type )
 		{
 			case SDL_KEYDOWN:
-				if ( _event.key.keysym.sym == SDLK_p && ! isPaused() )
+				if ( _event.key.keysym.sym == SDLK_p && ! _hold_key_events )
 				{
 					_menu->showScreen(Menu::Home);
 					togglePause();
@@ -187,20 +187,20 @@ void Game::handleEvents()
 				{
 					//Mix_Resume(-1);
 				}
-				else if ( _event.key.keysym.sym == SDLK_j )
+				else if ( _event.key.keysym.sym == SDLK_j && ! _hold_key_events )
 				{
 					_volume -= 10;
 					Mix_Volume(-1, _volume);
 				}
-				else if ( _event.key.keysym.sym == SDLK_k )
+				else if ( _event.key.keysym.sym == SDLK_k && ! _hold_key_events )
 				{
 					_volume += 10;
 					Mix_Volume(-1, _volume);
 				}
-				/*else if ( _event.key.keysym.sym == SDLK_r )
+				else if ( _event.key.keysym.sym == SDLK_r && ! _hold_key_events )
 					recStart();
-				else if ( _event.key.keysym.sym == SDLK_t )
-					recPlay();*/
+				else if ( _event.key.keysym.sym == SDLK_t && ! _hold_key_events )
+					recPlay();
 
 				break;
 			case SDL_QUIT:
