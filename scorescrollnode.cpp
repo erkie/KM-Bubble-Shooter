@@ -26,7 +26,7 @@ ScoreScrollNode::ScoreScrollNode(Screen *screen): Node(screen)
 	
 	_pos.x = 175;
 	_pos.y = 30;
-	_pos.w = 140;
+	_pos.w = 160;
 	_pos.h = 135;
 	
 	_name_color.r = _name_color.g = _name_color.b = 0xFF;
