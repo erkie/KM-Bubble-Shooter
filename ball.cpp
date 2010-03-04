@@ -101,8 +101,6 @@ void Ball::draw()
 {
 	if ( _game->isPaused() || ! visible() )
 		return;
-	//else if ( ! dirty() )
-	//	return;
 	
 	_rect.x = _pos.x();
 	_rect.y = _pos.y();
@@ -136,6 +134,9 @@ void Ball::tick()
 			hit = _game->grid()->inCollision(*this);
 			if ( hit ) break;
 		}
+		
+		xPos(_pos.x());
+		yPos(_pos.y());
 		
 		if ( _pos.y() < 0 || (hit = _game->grid()->inCollision(*this)) )
 		{
@@ -175,14 +176,14 @@ void Ball::tick()
 		if ( _pos.x() < 0 )
 		{
 			_vel._x *= -1;
-			_pos.x(0);
+			xPos(0);
 			
 			play_ball_bounce();
 		}
 		else if ( _pos.x() + _rect.w > size->w )
 		{
 			_vel._x *= -1;
-			_pos.x(size->w - _rect.w);
+			xPos(size->w - _rect.w);
 			
 			play_ball_bounce();
 		}
@@ -190,7 +191,7 @@ void Ball::tick()
 		if ( _pos.y() + _rect.h > size->h )
 		{
 			_vel._y *= -1;
-			_pos.y(size->h - _rect.h);
+			yPos(size->h - _rect.h);
 
 			play_ball_bounce();
 		}
@@ -199,14 +200,8 @@ void Ball::tick()
 	
 	if ( _anim.isRunning() )
 	{
-		if ( _image == _sprite )
-		{
-			std::cout << "Failed sanity check! And I'm a ";
-			printC(_color);
-			std::cout << std::endl;
-		}
 		SDL_FreeSurface(_image);
-		_image = rotozoomSurface(_sprite, 1, _anim.step(), 1);
+		setImage(rotozoomSurface(_sprite, 1, _anim.step(), 1));
 		
 		// Has the motion stopped
 		if ( ! _anim.isRunning() )
@@ -250,19 +245,14 @@ void Ball::satisfyGrid()
 }
 
 void Ball::gridToPos()
-{	
-	dirty(true);
-	
+{
 	int dd = _game->size()->w / BALL_GRID_W;
 	
 	int pos_x = dd * _grid_x + (_grid_y % 2 ? 12 : 0);
 	int pos_y = dd * _grid_y;
 	
-	_pos.x(pos_x);
-	_pos.y(pos_y);
-	
-	_rect.x = _pos.x();
-	_rect.y = _pos.y();
+	xPos(pos_x);
+	yPos(pos_y);
 }
 
 bool Ball::collidesWith(Ball &ball)

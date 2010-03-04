@@ -29,6 +29,12 @@
 #include "game.h"
 #include "sprite.h"
 
+void Sprite::setImage(SDL_Surface *s)
+{
+	_image = s;
+	_is_dirty = true;
+}
+
 void Sprite::dirtyDraw()
 {
 	rect_list dirty_rects = _game->getDirtyRects();
@@ -45,16 +51,15 @@ void Sprite::dirtyDraw()
 
 void Sprite::preTick()
 {
+	_is_dirty = false;
 	_old_rect = _rect;
+	_old_image = _image;
 }
 
 void Sprite::postTick()
 {
-	if ( _old_rect.x != _rect.x || _old_rect.y != _rect.y || _old_rect.w != _rect.w || _old_rect.h != _rect.h )
+	if ( _old_rect.x != _rect.x || _old_rect.y != _rect.y || _old_rect.w != _rect.w || _old_rect.h != _rect.h || _old_image != _image )
 	{
-		dirty(true);
-		
-		_game->addDirtyRect(_old_rect);
-		_game->addDirtyRect(_rect);
+		_is_dirty = true;
 	}
 }

@@ -36,17 +36,7 @@
 Grid::Grid(Game *game): Sprite(game), _remove_top(NULL) {}
 
 void Grid::tick()
-{
-	if ( _game->isPaused() )
-		return;
-	
-	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ )
-		(*iter)->tick();
-	
-	// Draw removable balls
-	for ( ball_list::iterator iter = _remove_list.begin(); iter != _remove_list.end(); iter++ )
-		(*iter)->tick();
-	
+{	
 	if ( ! _remove_top )
 	{
 		_remove_top = _remove_list.front();
@@ -77,23 +67,7 @@ void Grid::tick()
 	}
 }
 
-void Grid::draw()
-{
-	if ( _game->isPaused() )
-		return;
-	
-	// Draw my balls
-	for ( ball_list::iterator iter = _balls.begin(); iter != _balls.end(); iter++ )
-		(*iter)->draw();
-	
-	// Draw removable balls
-	for ( ball_list::iterator iter = _remove_list.begin(); iter != _remove_list.end(); iter++ )
-		(*iter)->draw();
-	
-	// Draw animated *bam*
-	if ( _remove_top )
-		_remove_top->draw();
-}
+void Grid::draw() {}
 
 void Grid::removeBall(Ball *ball)
 {
@@ -111,6 +85,7 @@ void Grid::removeBall(Ball *ball)
 void Grid::addBall(Ball *ball)
 {
 	_balls.push_back(ball);
+	_game->addSprite(ball);
 	
 	locateGroups(*ball);
 	handleDanglies();
@@ -148,6 +123,7 @@ void Grid::generateRow(int rows = 1, bool is_startrow = false)
 			ball->gridY(y);
 		
 			_balls.push_back(ball);
+			_game->addSprite(ball);
 		}
 }
 

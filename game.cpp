@@ -48,7 +48,7 @@ Game::Game()
 }
 
 Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0), _is_paused(false), _is_dirty(false), _volume(MIX_MAX_VOLUME * 0.6)
-	, _is_recording(false), _is_playing(false), _hold_key_events(false)
+	, _is_recording(false), _is_playing(false), _hold_key_events(false), _redraw(true)
 {	
 	_size = &_screen->clip_rect;
 	
@@ -126,10 +126,22 @@ void Game::loop()
 {
 	while ( _running )
 	{
-		draw();
+		if ( _redraw )
+		{
+			draw();
+		}
+		
 		clearBuffer(); // Clear old dirty rects
 		
+		_redraw = false;
+		
 		tick();
+		
+		if ( _redraw )
+		{
+			std::cout << "Redraw needed! " << SDL_GetTicks() << std::endl;
+		}
+		
 		cleanupList();
 		
 		cap();
@@ -162,6 +174,9 @@ void Game::cap()
 
 void Game::cleanupList()
 {
+	if ( ! _rem_queue.empty() )
+		_redraw = true;
+	
 	// Remove elements from remove queue
 	while ( ! _rem_queue.empty() )
 	{
@@ -186,7 +201,16 @@ void Game::handleEvents()
 	{
 		// Handle the sprites' events
 		for ( list::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++ )
-			(**iter).handleEvent(_event);
+		{
+			(*iter)->preTick();
+			(*iter)->handleEvent(_event);
+			(*iter)->postTick();
+			
+			if ( (*iter)->dirty() )
+			{
+				_redraw = true;
+			}
+		}
 		
 		// Default events
 		switch ( _event.type )
@@ -219,6 +243,8 @@ void Game::handleEvents()
 					recStart();
 				else if ( _event.key.keysym.sym == SDLK_t && ! _hold_key_events )
 					recPlay();
+				else if ( _event.key.keysym.sym == SDLK_a )
+					_arrow->current()->active();
 
 				break;
 			case SDL_QUIT:
@@ -263,7 +289,16 @@ void Game::tick()
 	{
 		// The count-call is mostly a sanity check
 		if ( ! _is_dirty || (_is_dirty && count(_rem_queue.begin(), _rem_queue.end(), *iter) == 0 ) )
+		{
+			(*iter)->preTick();
 			(*iter)->tick();
+			(*iter)->postTick();
+			
+			if ( (*iter)->dirty() )
+			{
+				_redraw = true;
+			}
+		}
 	}
 }
 

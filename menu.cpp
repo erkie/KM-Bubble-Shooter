@@ -74,6 +74,8 @@ void Menu::handleEvent(const SDL_Event &event)
 	if ( ! _game->isPaused() || ! _current_screen )
 		return;
 	
+	_game->markForRedraw();
+	
 	switch (event.type)
 	{
 		case SDL_MOUSEBUTTONDOWN:
@@ -112,4 +114,6 @@ void Menu::showScreen(MenuScreen menu)
 	{
 		((HighscoreScreen*)_current_screen)->renderPointsText();
 	}
+	
+	_game->markForRedraw();
 }

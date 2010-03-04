@@ -39,9 +39,11 @@ protected:
 	bool _is_dirty;
 	bool _is_visible;
 	
-	SDL_Surface *_image;
+	SDL_Surface *_image, *_old_image;
 	SDL_Rect _rect;
 	SDL_Rect _old_rect;
+	
+	void setImage(SDL_Surface *surface);
 public:
 	Sprite() {};
 	Sprite(Game *game): _game(game), _is_dirty(true), _is_visible(true), _image(NULL) {};

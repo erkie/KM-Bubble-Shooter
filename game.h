@@ -83,6 +83,9 @@ private:
 	// This flag indicates whether Game can use keyevents (such as the user pressing p for pause) or not
 	bool _hold_key_events;
 	
+	// This flag indicates whether the everything needs to be redrawn
+	bool _redraw;
+	
 	Grid *_grid;
 	Arrow *_arrow;
 	Background *_background;
@@ -147,6 +150,7 @@ public:
 	// Dirty rect animation
 	void addDirtyRect(SDL_Rect r) { _dirty_rects.push_back(r); };
 	rect_list & getDirtyRects() { return _dirty_rects; };
+	void markForRedraw() { _redraw = true; };
 	
 	void cap();
 	

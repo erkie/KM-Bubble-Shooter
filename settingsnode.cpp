@@ -33,7 +33,7 @@
 
 SettingsNode::SettingsNode(Screen *screen): Node(screen)
 {
-	_image = IMG_Load("menu-restart.png");
+	_image = IMG_Load("menu-settings.png");
 	
 	_pos = _image->clip_rect;
 	_pos.x = 0;

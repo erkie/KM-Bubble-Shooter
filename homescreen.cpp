@@ -47,7 +47,7 @@ HomeScreen::HomeScreen(Menu *menu): Screen(menu)
 	
 	addNode(new ContinueNode(this));
 	addNode(new NewGameNode(this));
-//	addNode(new SettingsNode(this));
+	addNode(new SettingsNode(this));
 	addNode(new HighscoreNode(this));
 }
 
