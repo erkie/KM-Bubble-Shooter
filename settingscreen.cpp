@@ -1,8 +1,8 @@
 /*
- *  cancelnode.h
+ *  settingscreen.cpp
  *  kattMickisShooter
  *
- *  Created by Erik Andersson on 2009-12-26.
+ *  Created by Erik Andersson on 2010-03-04.
  *  Copyright (c) 2010 Erik Andersson
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,18 +25,14 @@
  *
  */
 
-#ifndef __CANCELNODE_H__
-#define __CANCELNODE_H__
+#include "settingscreen.h"
 
-#include "node.h"
-
-class Screen;
-
-class CancelNode: public Node
+SettingsScreen::SettingsScreen(Menu *menu): Screen(menu)
 {
-public:
-	CancelNode(Screen *);
-	void onclick();
-};
+	
+}
 
-#endif
+void SettingsScreen::draw(SDL_Surface *screen)
+{
+	drawNodes(screen);
+}

@@ -1,8 +1,8 @@
 /*
- *  cancelnode.h
+ *  settingsnode.h
  *  kattMickisShooter
  *
- *  Created by Erik Andersson on 2009-12-26.
+ *  Created by Erik Andersson on 2010-03-04.
  *  Copyright (c) 2010 Erik Andersson
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,17 +25,15 @@
  *
  */
 
-#ifndef __CANCELNODE_H__
-#define __CANCELNODE_H__
+#ifndef __SETTINGSNODE_H__
+#define __SETTINGSNODE_H__
 
 #include "node.h"
 
-class Screen;
-
-class CancelNode: public Node
+class SettingsNode: public Node
 {
 public:
-	CancelNode(Screen *);
+	SettingsNode(Screen *screen);
 	void onclick();
 };
 

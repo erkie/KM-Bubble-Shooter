@@ -1,8 +1,8 @@
 /*
- *  cancelnode.h
+ *  settingsnode.cpp
  *  kattMickisShooter
  *
- *  Created by Erik Andersson on 2009-12-26.
+ *  Created by Erik Andersson on 2010-03-04.
  *  Copyright (c) 2010 Erik Andersson
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,18 +25,22 @@
  *
  */
 
-#ifndef __CANCELNODE_H__
-#define __CANCELNODE_H__
+#include "SDL_image/SDL_image.h"
 
-#include "node.h"
+#include "menu.h"
+#include "screen.h"
+#include "settingsnode.h"
 
-class Screen;
-
-class CancelNode: public Node
+SettingsNode::SettingsNode(Screen *screen): Node(screen)
 {
-public:
-	CancelNode(Screen *);
-	void onclick();
-};
+	_image = IMG_Load("menu-restart.png");
+	
+	_pos = _image->clip_rect;
+	_pos.x = 0;
+	_pos.y = 90;
+}
 
-#endif
+void SettingsNode::onclick()
+{
+	_screen->menu()->showScreen(Menu::Settings);
+}
