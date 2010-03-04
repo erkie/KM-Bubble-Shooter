@@ -14,25 +14,15 @@
 #include "SDL.h"
 #include "SDL_ttf/SDL_ttf.h"
 
-#include "node.h"
+#include "abstract_inputnode.h"
 
 class Screen;
 
-class InputNode: public Node
+class InputNode: public Abstract::InputNode
 {
-private:
-	SDL_Surface *_cursor;
-	SDL_Rect _cursor_rect;
-	
-	TTF_Font *_font;
-	SDL_Color _foreground;
-	
-	Uint16 _str[40];
-	int _curr_index;
 public:
 	InputNode(Screen *screen);
-	void draw(SDL_Surface *);
-	void renderText();
+	
 	void onclick();
 	void ontype(Uint16, SDLKey);
 	void onfocus();
