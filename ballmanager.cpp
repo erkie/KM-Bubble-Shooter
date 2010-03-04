@@ -33,21 +33,14 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 			std::cerr << "Could not load image: " << IMG_GetError() << std::endl;
 			return NULL;
 		}
+		SDL_SetColorKey(image, SDL_SRCCOLORKEY, SDL_MapRGB(image->format, 0xFF, 0xFF, 0xFF));
 		
-		SDL_Surface *optimized = SDL_DisplayFormatAlpha(image);
-		
-		if ( optimized != NULL )
-		{
-			SDL_FreeSurface(image);
-			SDL_SetColorKey(optimized, SDL_SRCCOLORKEY, SDL_MapRGB(optimized->format, 0, 0xFF, 0xFF));
-			image = optimized;
-		}
 		_image = image;
 	}
 	
 	// Create single image (if needed)
 	int index = color - 1;
-	if ( _balls[index] == NULL )
+	if ( ! _balls[index] )
 	{
 		// Make copy of the ball that we can enlarge
 		SDL_PixelFormat *format = _image->format;
@@ -55,7 +48,7 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 												 BALL_WIDTH, BALL_HEIGHT, format->BitsPerPixel,
 												 format->Rmask, format->Bmask, format->Gmask, format->Amask);
 		//										 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-		//SDL_FillRect(ball, NULL, SDL_MapRGBA(format, 0xFF, 0xFF, 0xFF, 0x00));
+		//SDL_FillRect(ball, NULL, SDL_MapRGBA(format, 0x00, 0x00, 0x00, 0x00));
 		
 		SDL_Rect rect;
 		rect.y = 0;
@@ -71,8 +64,6 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 		}
 		
 		draw_transparent_surface_onto_empty_surface(rect, ball, _image);
-		
-		std::cout << Ball::getC(color) << " " << ball << std::endl;
 		
 		_balls[index] = ball;
 	}

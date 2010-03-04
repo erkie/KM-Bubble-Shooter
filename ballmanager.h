@@ -19,9 +19,10 @@ const int BALLMANAGER_COLORS = 6;
 
 class BallManager
 {
-	static SDL_Surface* _balls[BALLMANAGER_COLORS];
+private:
 	static SDL_Surface* _image;
 	static std::vector<Ball::Colors> _available;
+	static SDL_Surface* _balls[BALLMANAGER_COLORS];
 public:
 	static SDL_Surface *load(Ball::Colors);
 	static Ball::Colors randomColor();
