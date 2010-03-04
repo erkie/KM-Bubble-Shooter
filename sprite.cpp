@@ -35,20 +35,6 @@ void Sprite::setImage(SDL_Surface *s)
 	_is_dirty = true;
 }
 
-void Sprite::dirtyDraw()
-{
-	rect_list dirty_rects = _game->getDirtyRects();
-	SDL_Surface *buffer = _game->buffer();
-	SDL_Rect intersection, cp;
-	
-	for ( rect_list::iterator iter = dirty_rects.begin(); iter != dirty_rects.end(); iter++ )
-	{
-		intersection = get_rect_intersection(_rect, *iter);
-		cp = *iter;
-		SDL_BlitSurface(_image, &intersection, buffer, &cp);
-	}
-}
-
 void Sprite::preTick()
 {
 	_is_dirty = false;

@@ -148,8 +148,6 @@ public:
 	void cleanupList();
 	
 	// Dirty rect animation
-	void addDirtyRect(SDL_Rect r) { _dirty_rects.push_back(r); };
-	rect_list & getDirtyRects() { return _dirty_rects; };
 	void markForRedraw() { _redraw = true; };
 	
 	void cap();

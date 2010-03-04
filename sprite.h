@@ -51,7 +51,6 @@ public:
 	virtual void handleEvent(const SDL_Event &event) {};
 	virtual void tick() = 0;
 	virtual void draw() = 0;
-	void dirtyDraw();
 	
 	void preTick();
 	void postTick();

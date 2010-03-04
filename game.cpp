@@ -119,7 +119,6 @@ void Game::removeSprite(Sprite *sprite)
 void Game::clearBuffer()
 {
 	//SDL_FillRect(_buffer, &_buffer->clip_rect, SDL_MapRGB(_buffer->format, 0xFF, 0xFF, 0xFF));
-	_dirty_rects.erase(_dirty_rects.begin(), _dirty_rects.end());
 }
 
 void Game::loop()
@@ -130,20 +129,11 @@ void Game::loop()
 		{
 			draw();
 		}
-		
-		clearBuffer(); // Clear old dirty rects
-		
 		_redraw = false;
 		
+		clearBuffer(); // Clear old dirty rects
 		tick();
-		
-		if ( _redraw )
-		{
-			std::cout << "Redraw needed! " << SDL_GetTicks() << std::endl;
-		}
-		
 		cleanupList();
-		
 		cap();
 	}
 }
