@@ -72,7 +72,6 @@ void Grid::draw() {}
 void Grid::removeBall(Ball *ball)
 {
 	_game->removeSprite(ball);
-	delete ball;
 	
 	_game->arrow()->checkQueueColors();
 	
@@ -85,7 +84,6 @@ void Grid::removeBall(Ball *ball)
 void Grid::addBall(Ball *ball)
 {
 	_balls.push_back(ball);
-	_game->addSprite(ball);
 	
 	locateGroups(*ball);
 	handleDanglies();
@@ -115,7 +113,7 @@ void Grid::generateRow(int rows = 1, bool is_startrow = false)
 	for ( int y = 0; y < rows; y++ )
 		for ( int x = 0; x < BALL_GRID_W; x++ )
 		{
-			Ball *ball = new Ball(_game);
+			Ball *ball = Ball::create(_game);
 			if ( ! is_startrow )
 				ball->setRemainingColor();
 			ball->setState(Ball::Pinned);
@@ -123,7 +121,6 @@ void Grid::generateRow(int rows = 1, bool is_startrow = false)
 			ball->gridY(y);
 		
 			_balls.push_back(ball);
-			_game->addSprite(ball);
 		}
 }
 
@@ -191,7 +188,6 @@ void Grid::locateGroups(Ball &relativeTo)
 		removeBalls(found);
 	else
 		_game->decrementLives();
-
 }
 
 void Grid::search(Ball &ball, ball_list &result)

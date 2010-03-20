@@ -29,6 +29,8 @@
 #include "game.h"
 #include "sprite.h"
 
+int Sprite::CID = 0;
+
 void Sprite::setImage(SDL_Surface *s)
 {
 	_image = s;

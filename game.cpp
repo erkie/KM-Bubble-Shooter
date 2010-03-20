@@ -48,7 +48,7 @@ Game::Game()
 }
 
 Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0), _is_paused(false), _is_dirty(false), _volume(MIX_MAX_VOLUME * 0.6)
-	, _is_recording(false), _is_playing(false), _hold_key_events(false), _redraw(true)
+	, _is_recording(false), _is_playing(false), _hold_key_events(false), _redraw(true), _rec_slow(0)
 {	
 	_size = &_screen->clip_rect;
 	
@@ -125,7 +125,7 @@ void Game::loop()
 {
 	while ( _running )
 	{
-		if ( _redraw )
+		if ( _redraw || _is_playing )
 		{
 			draw();
 		}
@@ -167,12 +167,26 @@ void Game::cleanupList()
 	if ( ! _rem_queue.empty() )
 		_redraw = true;
 	
+	// Loop through rem queue and find things in add queue that have been removed already
+	for ( queue::iterator iter = _rem_queue.begin(); iter != _rem_queue.end(); iter++ )
+	{
+		for ( queue::iterator aiter = _add_queue.begin(); aiter != _add_queue.end(); aiter++ )
+		{
+			if ( (*aiter)->ID == (*iter)->ID )
+			{
+				_add_queue.erase(aiter);
+			}
+		}
+	}
+	
 	// Remove elements from remove queue
 	while ( ! _rem_queue.empty() )
 	{
 		Sprite *d = _rem_queue.front();
-		_sprites.remove(d);
 		_rem_queue.pop_front();
+		
+		_sprites.remove(d);
+		delete d;
 	}
 	
 	// Add new elements
@@ -255,7 +269,7 @@ void Game::draw()
 	
 	rec();
 	
-	if ( _is_recording || _is_playing )
+	if ( (_is_recording || _is_playing) && _rec_slow++ % 10 == 0 )
 	{
 		SDL_Rect place;
 		place.x = _buffer->clip_rect.w - 70;
@@ -327,6 +341,7 @@ void Game::lost()
 	
 	showSubmit();
 	pause();
+	
 	reset();
 }
 
@@ -347,9 +362,10 @@ void Game::showSubmit()
 }
 
 void Game::reset()
-{
+{	
 	_grid->emptyRows();
 	_grid->generateStartRows();
+	//_generate_start = true;
 	_lives[0] = _lives[1] = _lives[2] = GAME_LIVES;
 	_points = 0;
 	_arrow->setReady(true);

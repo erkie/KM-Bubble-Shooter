@@ -42,6 +42,6 @@ NewGameNode::NewGameNode(Screen *screen): Node(screen)
 
 void NewGameNode::onclick()
 {
-	_screen->game()->start();
 	_screen->game()->reset();
+	_screen->game()->start();
 }

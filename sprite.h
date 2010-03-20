@@ -35,6 +35,8 @@ class Game;
 class Sprite
 {
 protected:
+	static int CID;
+	
 	Game *_game;
 	bool _is_dirty;
 	bool _is_visible;
@@ -45,8 +47,13 @@ protected:
 	
 	void setImage(SDL_Surface *surface);
 public:
+	int ID;
+	
 	Sprite() {};
-	Sprite(Game *game): _game(game), _is_dirty(true), _is_visible(true), _image(NULL) {};
+	Sprite(Game *game): _game(game), _is_dirty(true), _is_visible(true), _image(NULL)
+	{
+		ID = CID++;
+	};
 	
 	virtual void handleEvent(const SDL_Event &event) {};
 	virtual void tick() = 0;

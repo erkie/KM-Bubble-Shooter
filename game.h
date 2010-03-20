@@ -39,7 +39,7 @@ const int GAME_FPS = 50;
 const int PAUSE_FPS = 50;
 const int ADJACENT_BALLS = 3;
 const int GAME_LIVES = 6;
-const int GAME_RECORD_FRAMES = GAME_FPS * 30; // 30 seconds
+const int GAME_RECORD_FRAMES = GAME_FPS * 10; // 30 seconds
 
 class Grid;
 class Arrow;
@@ -107,7 +107,7 @@ private:
 	
 	// Recording (debug)
 	bool _is_recording, _is_playing;
-	int _current_frame, _play_frame;
+	int _current_frame, _play_frame, _rec_slow;
 	SDL_Surface *_rec_frames[GAME_RECORD_FRAMES];
 	SDL_Surface *_playing, *_recording;
 	void rec();
@@ -144,7 +144,6 @@ public:
 	// Sprites
 	void addSprite(Sprite*);
 	void removeSprite(Sprite*);
-	void removeSpriteImmediately(Sprite*);
 	void cleanupList();
 	
 	// Dirty rect animation

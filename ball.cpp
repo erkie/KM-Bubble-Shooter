@@ -128,12 +128,15 @@ void Ball::tick()
 		Ball *hit;
 		// Break movement into smaller pieces and analyze them
 		int pieces = 5, i;
-		for ( i = 1; i <= pieces; i++ )
+		for ( i = 1; i <= pieces * 2; i++ )
 		{
-			_pos = orig_pos + _vel * (_game->tdelta() / pieces * i);
+			_pos = orig_pos + (_vel * (_game->tdelta() / pieces * i));
 			hit = _game->grid()->inCollision(*this);
 			if ( hit ) break;
 		}
+		
+		if ( i > pieces )
+			_pos = orig_pos + _vel * _game->tdelta();
 		
 		xPos(_pos.x());
 		yPos(_pos.y());
@@ -152,7 +155,6 @@ void Ball::tick()
 			
 			// Remove myself from the empty movement void
 			_game->arrow()->setReady(true);
-			_game->removeSprite(this);
 			
 			// Animate bouncy bounce
 			active();
@@ -162,9 +164,11 @@ void Ball::tick()
 			_game->grid()->addBall(this);
 			
 			// I've hit a wall
-			if ( ! hit ) 
+			if ( ! hit )
+			{
 				_game->decrementLives();
-			
+			}
+				
 			play_ball_thud();
 			
 			return;
