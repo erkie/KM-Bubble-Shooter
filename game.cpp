@@ -352,6 +352,7 @@ void Game::win()
 	_points *= 2;
 	showSubmit();
 	pause();
+	
 	reset();
 }
 
