@@ -220,6 +220,12 @@ void Game::handleEvents()
 		switch ( _event.type )
 		{
 			case SDL_KEYDOWN:
+				if ( _event.key.keysym.sym == SDLK_q )
+				{
+					Uint8* keyState = SDL_GetKeyState(NULL);
+					if ( keyState[SDLK_LMETA] || keyState[SDLK_RMETA] )
+						_running = false;
+				}
 				if ( _event.key.keysym.sym == SDLK_p && ! _hold_key_events )
 				{
 					_menu->showScreen(Menu::Home);
