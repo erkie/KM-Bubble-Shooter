@@ -24,55 +24,6 @@ const int SCREEN_BPP = 32;
 
 int main(int argc, char *argv[])
 {
-	/*using namespace std;
-	Uint16 text[40];
-	for ( int i = 0; i < 40; i++ )
-		text[i] = '\0';
-	
-	cout << "Testing length:\n";
-	cout << uni_length(text) << endl;
-	
-	text[0] = 'h';
-	cout << uni_length(text) << endl;
-	
-	text[1] = 'e';
-	cout << uni_length(text) << endl;
-	
-	text[2] = 'l';
-	text[3] = 'l';
-	
-	cout << "Testing placing characters in arrays\n";
-	uni_place(text, 's', 40, 0);
-	
-	for ( int i = 0; i < 40; i++ )
-		cout << (char)i[text];
-	cout << endl;
-	
-	for ( int i = 5; i < 40; i++ )
-		text[i] = 'a';
-	uni_place(text, 'z', 40, 38);
-	
-	for ( int i = 0; i < 40; i++ )
-		cout << (char)i[text];
-	endl(cout);
-	
-	cout << "<empty string>\n";
-	for ( int i = 0; i < 40; i++ )
-		text[i] = '\0';
-	
-	for ( int i = 0; i < 5; i++ )
-		uni_place(text, 'a' + i, 40, i);
-	
-	for ( int i = 0; i < 40; i++ )
-		cout << (char)i[text];
-	endl(cout);
-	
-	uni_slice(text, 40, 2);
-	for ( int i = 0; i < 40; i++ )
-		cout << (char)i[text];
-	
-	return 0;*/
-	
 	// Seed random number generator
 	srand(time(NULL));
 	

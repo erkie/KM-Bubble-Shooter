@@ -72,7 +72,6 @@ void Grid::draw() {}
 void Grid::removeBall(Ball *ball)
 {
 	_game->removeSprite(ball);
-	
 	_game->arrow()->checkQueueColors();
 	
 	if ( _balls.size() == 0 )
@@ -139,7 +138,7 @@ int Grid::countRows()
 
 void Grid::emptyRows()
 {
-	// Delete ball
+	// Delete balls
 	for ( ball_list::iterator ball = _balls.begin(); ball != _balls.end(); ball++ )
 		removeBall(*ball);
 	
