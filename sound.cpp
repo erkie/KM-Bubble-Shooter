@@ -30,6 +30,12 @@
 #include "SDL_mixer/SDL_mixer.h"
 #include "sound.h"
 
+void play_music()
+{
+	static Mix_Music *sound = Mix_LoadMUS("kattMickisShooter.ogg");
+	Mix_PlayMusic(sound, -1);
+}
+
 void play_ball_bounce()
 {
 	static Mix_Chunk *sound = Mix_LoadWAV("bing.wav");

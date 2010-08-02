@@ -28,6 +28,7 @@
 #ifndef __SOUND_H__
 #define __SOUND_H__
 
+void play_music();
 void play_ball_bounce();
 void play_ball_thud();
 void play_ball_die();

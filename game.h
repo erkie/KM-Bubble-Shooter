@@ -94,8 +94,6 @@ private:
 	
 	bool _running;
 	
-	void clearBuffer();
-	
 	// Gameplay-related
 	short _lives[3];
 	long _points, _last_points;
@@ -116,6 +114,8 @@ private:
 	void recPlay();
 	void recStop();
 	void recFrame();
+	
+	void setVolume();
 public:
 	Game();
 	Game(SDL_Surface* screen);
@@ -129,6 +129,7 @@ public:
 	
 	void holdKeyEvents(bool s) { _hold_key_events = s; };
 	
+	// Getters
 	SDL_Surface *buffer() { return _buffer;	};
 	SDL_Rect *size() { return _size; };
 	double tdelta() { return _tdelta; };
@@ -160,6 +161,11 @@ public:
 	void handleEvents();
 	void draw();
 	void tick();
+	
+	// Sound
+	void volumeUp();
+	void volumeDown();
+	bool toggleMusic();
 	
 	// Lives
 	void checkRowCount();

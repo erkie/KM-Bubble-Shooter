@@ -42,13 +42,17 @@
 #include "points.h"
 #include "menu.h"
 
+const int START_VOLUME = MIX_MAX_VOLUME / 2 / 2; // 10th power of 2
+const int MAX_VOLUME = MIX_MAX_VOLUME; // 12th power of 2
+
 Game::Game()
 {
 	std::cout << "Game() called" << std::endl;
 }
 
-Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0), _is_paused(false), _is_dirty(false), _volume(MIX_MAX_VOLUME * 0.6)
-	, _is_recording(false), _is_playing(false), _hold_key_events(false), _redraw(true), _rec_slow(0)
+Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _last_points(0), _points_quantifier(0)
+	, _is_paused(false), _is_dirty(false), _volume(START_VOLUME), _is_recording(false), _is_playing(false)
+	, _hold_key_events(false), _redraw(true), _rec_slow(0)
 {	
 	_size = &_screen->clip_rect;
 	
@@ -72,7 +76,8 @@ Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _l
 	_sprites.push_back(_points_sprite);
 	_sprites.push_back(_menu);
 	
-	Mix_Volume(-1, _volume);
+	setVolume();
+	play_music();
 	
 	// Begin game
 	reset();
@@ -116,11 +121,6 @@ void Game::removeSprite(Sprite *sprite)
 	_rem_queue.push_back(sprite);
 }
 
-void Game::clearBuffer()
-{
-	//SDL_FillRect(_buffer, &_buffer->clip_rect, SDL_MapRGB(_buffer->format, 0xFF, 0xFF, 0xFF));
-}
-
 void Game::loop()
 {
 	while ( _running )
@@ -131,7 +131,6 @@ void Game::loop()
 		}
 		_redraw = false;
 		
-		clearBuffer(); // Clear old dirty rects
 		tick();
 		cleanupList();
 		cap();
@@ -231,23 +230,17 @@ void Game::handleEvents()
 					_menu->showScreen(Menu::Home);
 					togglePause();
 				}
-				else if ( _event.key.keysym.sym == SDLK_n )
+				else if ( _event.key.keysym.sym == SDLK_m && ! _hold_key_events )
 				{
-					//Mix_Pause(-1);
-				}
-				else if ( _event.key.keysym.sym == SDLK_m )
-				{
-					//Mix_Resume(-1);
+					toggleMusic();
 				}
 				else if ( _event.key.keysym.sym == SDLK_j && ! _hold_key_events )
 				{
-					_volume -= 10;
-					Mix_Volume(-1, _volume);
+					volumeDown();
 				}
 				else if ( _event.key.keysym.sym == SDLK_k && ! _hold_key_events )
 				{
-					_volume += 10;
-					Mix_Volume(-1, _volume);
+					volumeUp();
 				}
 				else if ( _event.key.keysym.sym == SDLK_r && ! _hold_key_events )
 					recStart();
@@ -312,6 +305,38 @@ void Game::tick()
 	}
 }
 
+void Game::setVolume()
+{
+	Mix_Volume(-1, (float)_volume / (float)MAX_VOLUME * MIX_MAX_VOLUME);
+	Mix_VolumeMusic((float)_volume / (float)MAX_VOLUME * MIX_MAX_VOLUME);
+}
+
+void Game::volumeUp()
+{
+	_volume *= 2;
+	_volume = _volume > MAX_VOLUME ? MAX_VOLUME : _volume;
+	_volume = _volume == 0 ? 2 : _volume;
+	
+	setVolume();
+}
+
+void Game::volumeDown() 
+{
+	_volume /= 2;
+	
+	setVolume();
+}
+
+bool Game::toggleMusic()
+{
+	if ( ! Mix_PausedMusic() ) {
+		Mix_PauseMusic();
+		return false;
+	}
+	Mix_ResumeMusic();
+	return true;
+}
+
 /* Gameplay-related */
 
 void Game::checkRowCount()
@@ -372,7 +397,6 @@ void Game::reset()
 {	
 	_grid->emptyRows();
 	_grid->generateStartRows();
-	//_generate_start = true;
 	_lives[0] = _lives[1] = _lives[2] = GAME_LIVES;
 	_points = 0;
 	_arrow->setReady(true);
