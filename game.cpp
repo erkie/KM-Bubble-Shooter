@@ -326,7 +326,6 @@ void Game::volumeUp()
 void Game::volumeDown() 
 {
 	_volume /= 2;
-	
 	setVolume();
 }
 
