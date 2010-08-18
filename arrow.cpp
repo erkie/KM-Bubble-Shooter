@@ -32,6 +32,7 @@
 
 #include "arrow.h"
 #include "game.h"
+#include "music.h"
 #include "ball.h"
 #include "vector.h"
 
@@ -83,12 +84,7 @@ void Arrow::tick()
 	
 	int i = 0;
 	for ( ball_queue::iterator iter = _queue.begin(); iter != _queue.end(); iter++, i++ )
-	{
-		if ( i >= _game->lives() )
-			(*iter)->visible(false);
-		else
-			(*iter)->visible(true);
-	}
+		(*iter)->visible( !(i >= _game->lives()) );
 }
 
 void Arrow::draw()
@@ -107,7 +103,8 @@ void Arrow::handleEvent(const SDL_Event &event)
 	
 	switch (event.type) {
 		case SDL_MOUSEBUTTONDOWN:
-			release();
+			if ( ! _game->music()->collidesWith(event.button.x, event.button.y) )
+				release();
 			break;
 			
 		case SDL_MOUSEMOTION:

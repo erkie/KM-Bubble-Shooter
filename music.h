@@ -1,8 +1,8 @@
 /*
- *  sound.cpp
+ *  music.h
  *  kattMickisShooter
  *
- *  Created by Erik Andersson on 2009-12-23.
+ *  Created by Erik Andersson on 2010-08-17.
  *  Copyright (c) 2010 Erik Andersson
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,48 +22,28 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
-#include <iostream>
+#ifndef __MUSIC_H__
+#define __MUSIC_H__
 
-#include "SDL_mixer/SDL_mixer.h"
-#include "sound.h"
+#include "SDL.h"
 
-void play_music()
+#include "game.h"
+#include "sprite.h"
+
+class Music: public Sprite
 {
-	static Mix_Music *sound = Mix_LoadMUS("kattMickisShooter.mp3");
-	Mix_PlayMusic(sound, -1);
-}
+	SDL_Surface *_is_playing;
+	SDL_Surface *_is_mute;
+	
+	SDL_Rect _default_pos;
+	SDL_Rect _paused_pos;
+public:
+	Music(Game *);
+	void tick();
+	void draw();
+	void handleEvent(const SDL_Event &event);
+};
 
-void play_ball_bounce()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("bing.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_ball_thud()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("thud.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_ball_die()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("die.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_lose()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("no.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_win()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("hurray.wav");
-	if ( ! sound )
-		std::cout << Mix_GetError();
-	Mix_PlayChannel(-1, sound, 0);
-}
+#endif

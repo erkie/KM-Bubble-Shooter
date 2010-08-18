@@ -69,6 +69,17 @@ public:
 	inline bool visible() { return _is_visible; };
 	
 	Game *game() { return _game; };
+	
+	bool collidesWith(SDL_Rect r)
+	{
+		//      right inside left         top inside bottom         left inside right        bottom inside top
+		return r.x + r.w > _rect.x && r.y < _rect.y + _rect.h && r.x < _rect.x + _rect.w && r.y + r.h > _rect.y;
+	}
+	
+	bool collidesWith(int x, int y)
+	{
+		return x > _rect.x && y > _rect.y && x < _rect.x + _rect.w && y < _rect.y + _rect.h;
+	}
 };
 
 #endif

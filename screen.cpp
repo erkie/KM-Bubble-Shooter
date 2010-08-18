@@ -53,6 +53,7 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 			{
 				// Get focused node
 				Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
+				
 				// If it isn't the current node the old focused node is blurred
 				if ( node != _focus_node && _focus_node != NULL )
 				{

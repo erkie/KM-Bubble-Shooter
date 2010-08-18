@@ -60,7 +60,7 @@ void Points::renderPoints(long points)
 	_image = TTF_RenderText_Blended(_font, pstr.str().c_str(), _font_color);
 	
 	_rect = _image->clip_rect;
-	_rect.x = _game->size()->w - _rect.w - 10;
+	_rect.x = _game->size()->w - _rect.w - 40;
 	_rect.y = _game->size()->h - _rect.h - 10;
 }
 
@@ -68,26 +68,18 @@ void Points::tick()
 {
 	if ( _game->isPaused() )
 		return;
-	//preTick();
 	
 	long points = _game->points();
 	if ( _last_points != points )
 	{
 		renderPoints(points);
 	}
-	
-	//postTick();
 }
 
 void Points::draw()
 {
 	if ( _game->isPaused() )
 		return;
-	//if ( ! dirty() )
-	//	return;
-	
+
 	SDL_BlitSurface(_image, NULL, _game->buffer(), &_rect);
-	//dirtyDraw();
-	
-	//dirty(false);
 }

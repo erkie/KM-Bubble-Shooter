@@ -1,8 +1,8 @@
 /*
- *  sound.cpp
+ *  music.cpp
  *  kattMickisShooter
  *
- *  Created by Erik Andersson on 2009-12-23.
+ *  Created by Erik Andersson on 2010-08-17.
  *  Copyright (c) 2010 Erik Andersson
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,48 +22,63 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 #include <iostream>
 
-#include "SDL_mixer/SDL_mixer.h"
-#include "sound.h"
+#include "music.h"
 
-void play_music()
+#include "SDL.h"
+#include "SDL_image/SDL_image.h"
+
+#include "lib.h"
+
+Music::Music(Game *game): Sprite(game)
 {
-	static Mix_Music *sound = Mix_LoadMUS("kattMickisShooter.mp3");
-	Mix_PlayMusic(sound, -1);
+	_is_playing = Lib::loadImage("sound.png");
+	_is_mute = Lib::loadImage("mute.png");
+	
+	_image = _game->isPlayingMusic() ? _is_playing : _is_mute;
+	
+	_default_pos.x = _game->size()->w - _is_playing->clip_rect.w - 10;
+	_default_pos.y = _game->size()->h - _is_playing->clip_rect.h - 10;
+	
+	_paused_pos.x = _game->size()->w - _is_playing->clip_rect.w - 10;
+	_paused_pos.y = 10;
+	
+	_rect.x = _default_pos.x;
+	_rect.y = _default_pos.y;
 }
 
-void play_ball_bounce()
+void Music::tick()
 {
-	static Mix_Chunk *sound = Mix_LoadWAV("bing.wav");
-	Mix_PlayChannel(-1, sound, 0);
+	_image = _game->isPlayingMusic() ? _is_playing : _is_mute;
+	
+	if ( _game->isPaused() )
+	{
+		_rect.x = _paused_pos.x;
+		_rect.y = _paused_pos.y;
+	}
+	else
+	{
+		_rect.x = _default_pos.x;
+		_rect.y = _default_pos.y;
+	}
+
 }
 
-void play_ball_thud()
+void Music::draw()
 {
-	static Mix_Chunk *sound = Mix_LoadWAV("thud.wav");
-	Mix_PlayChannel(-1, sound, 0);
+	SDL_BlitSurface(_image, NULL, _game->buffer(), &_rect);
 }
 
-void play_ball_die()
+void Music::handleEvent(const SDL_Event &event)
 {
-	static Mix_Chunk *sound = Mix_LoadWAV("die.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_lose()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("no.wav");
-	Mix_PlayChannel(-1, sound, 0);
-}
-
-void play_win()
-{
-	static Mix_Chunk *sound = Mix_LoadWAV("hurray.wav");
-	if ( ! sound )
-		std::cout << Mix_GetError();
-	Mix_PlayChannel(-1, sound, 0);
+	switch (event.type) {
+		case SDL_MOUSEBUTTONDOWN:
+			if ( collidesWith(event.button.x, event.button.y) ) {
+				_game->toggleMusic();
+			}
+			break;
+	}
 }

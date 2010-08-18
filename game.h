@@ -39,7 +39,7 @@ const int GAME_FPS = 50;
 const int PAUSE_FPS = 50;
 const int ADJACENT_BALLS = 3;
 const int GAME_LIVES = 6;
-const int GAME_RECORD_FRAMES = GAME_FPS * 10; // 30 seconds
+const int GAME_RECORD_FRAMES = GAME_FPS * 10; // 10 seconds
 
 class Grid;
 class Arrow;
@@ -47,6 +47,7 @@ class Sprite;
 class Background;
 class Points;
 class Menu;
+class Music;
 
 typedef std::list<SDL_Rect> rect_list;
 
@@ -91,6 +92,7 @@ private:
 	Background *_background;
 	Points *_points_sprite;
 	Menu *_menu;
+	Music *_music;
 	
 	bool _running;
 	
@@ -141,6 +143,7 @@ public:
 	Grid *grid() const { return _grid; };
 	Arrow *arrow() const { return _arrow; };
 	Background *background() const { return _background; };
+	Music *music() const { return _music; };
 	
 	// Sprites
 	void addSprite(Sprite*);
@@ -166,6 +169,7 @@ public:
 	void volumeUp();
 	void volumeDown();
 	bool toggleMusic();
+	bool isPlayingMusic();
 	
 	// Lives
 	void checkRowCount();

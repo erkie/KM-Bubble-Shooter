@@ -41,6 +41,7 @@
 #include "grid.h"
 #include "points.h"
 #include "menu.h"
+#include "music.h"
 
 const int START_VOLUME = MIX_MAX_VOLUME / 2 / 2; // 10th power of 2
 const int MAX_VOLUME = MIX_MAX_VOLUME; // 12th power of 2
@@ -69,12 +70,14 @@ Game::Game(SDL_Surface *screen): _running(true), _screen(screen), _points(0), _l
 	_grid = new Grid(this);
 	_points_sprite = new Points(this);
 	_menu = new Menu(this);
+	_music = new Music(this);
 	
 	_sprites.push_back(_background);
 	_sprites.push_back(_arrow);
 	_sprites.push_back(_grid);
 	_sprites.push_back(_points_sprite);
 	_sprites.push_back(_menu);
+	_sprites.push_back(_music);
 	
 	setVolume();
 	play_music();
@@ -335,6 +338,11 @@ bool Game::toggleMusic()
 	}
 	Mix_ResumeMusic();
 	return true;
+}
+
+bool Game::isPlayingMusic()
+{
+	return ! Mix_PausedMusic();
 }
 
 /* Gameplay-related */
