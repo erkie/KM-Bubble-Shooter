@@ -334,8 +334,10 @@ bool Game::toggleMusic()
 {
 	if ( ! Mix_PausedMusic() ) {
 		Mix_PauseMusic();
+		SDL_PauseAudio(1);
 		return false;
 	}
+	SDL_PauseAudio(0);
 	Mix_ResumeMusic();
 	return true;
 }
