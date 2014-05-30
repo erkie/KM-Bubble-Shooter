@@ -7,7 +7,7 @@ Installation:
 
 ### Mac ###
 
-    $ brew install sdl sdl_ttf sdl_mixer sdl_gfx sdl_image
+    $ brew install libvorbis sdl sdl_ttf sdl_mixer sdl_gfx sdl_image
     $ make
     $ ./km-bubble-shooter
     $ # party

@@ -33,6 +33,13 @@
 void play_music()
 {
 	static Mix_Music *sound = Mix_LoadMUS("kattMickisShooter.mp3");
+	if (sound == NULL)
+	{
+		std::cout << Mix_GetError() << std::endl;
+		sound = Mix_LoadMUS("kattMickisShooter.ogg");
+	}
+	if (sound == NULL)
+		std::cout << Mix_GetError() << std::endl;
 	Mix_PlayMusic(sound, -1);
 }
 
