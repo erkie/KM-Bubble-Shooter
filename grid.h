@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,7 +37,7 @@
 class GridPos
 {
 public:
-	GridPos(int gx, int gy): x(gx), y(gy) {}; 
+	GridPos(int gx, int gy): x(gx), y(gy) {};
 	int x, y;
 };
 
@@ -47,17 +47,17 @@ class Grid: public Sprite
 {
 private:
 	typedef std::list<GridPos*> grid_list;
-	
+
 	ball_list _balls;
 	ball_list _remove_list;
-	
+
 	Ball *_remove_top;
-	
+
 public:
 	Grid(Game *game);
 	void tick();
 	void draw();
-	
+
 	// Row handling
 	void removeBall(Ball *ball);
 	void addBall(Ball *ball);
@@ -67,20 +67,20 @@ public:
 	void generateStartRows();
 	int countRows();
 	void emptyRows();
-	
+
 	// Ball detection
 	Ball *inCollision(Ball &);
 	bool hasBallOn(int x, int y);
 	Ball *getBallOn(int x, int y);
 	Ball *getBallWithColor(int x, int y, Ball::Colors color);
-	
+
 	// Group handling
 	void locateGroups(Ball &relativeTo);
 	bool gridListHas(grid_list &, int, int);
 	void search(Ball &ball, ball_list &found);
 	void handleDanglies();
 	bool doSearch(Ball &ball, ball_list &found, grid_list &searched, bool recursive, bool use_color);
-	
+
 	ball_list& balls() { return _balls; };
 };
 

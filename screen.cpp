@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -53,7 +53,7 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 			{
 				// Get focused node
 				Node *node = getNodeOn(event.button.x - _pos.x, event.button.y - _pos.y);
-				
+
 				// If it isn't the current node the old focused node is blurred
 				if ( node != _focus_node && _focus_node != NULL )
 				{
@@ -68,23 +68,23 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 					_focus_node->focus(true);
 					_focus_node->onfocus();
 				}
-				
+
 				_is_dragging = true;
 			}
 			break;
-		
+
 		case Scroll:
 			if ( _focus_node )
 				_focus_node->onscroll(event.button.button == SDL_BUTTON_WHEELUP);
 			break;
-		
+
 		case Move:
 			if ( _is_dragging && _focus_node )
 			{
 				_focus_node->ondrag(event.motion.xrel, event.motion.yrel);
 			}
 			break;
-		
+
 		case Type:
 			if ( _focus_node )
 			{
@@ -92,7 +92,7 @@ void Screen::fireEvent(Events type, const SDL_Event &event)
 				_focus_node->ontype(key, event.key.keysym.sym);
 			}
 			break;
-			
+
 		case Click:
 			if ( _focus_node )
 				_focus_node->onclick();
