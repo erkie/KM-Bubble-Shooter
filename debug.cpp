@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -34,36 +34,36 @@ void print_pixel_at(const char *name, SDL_Surface *surface, int x, int y)
 	SDL_PixelFormat *fmt;
 	Uint32 temp, pixel;
 	Uint8 red, green, blue, alpha;
-	
+
 	fmt = surface->format;
 	SDL_LockSurface(surface);
 	pixel = *((Uint32*)surface->pixels) + x + y;
 	SDL_UnlockSurface(surface);
-	
+
 	/* Get Red component */
 	temp = pixel & fmt->Rmask;  /* Isolate red component */
 	temp = temp >> fmt->Rshift; /* Shift it down to 8-bit */
 	temp = temp << fmt->Rloss;  /* Expand to a full 8-bit number */
 	red = (Uint8)temp;
-	
+
 	/* Get Green component */
 	temp = pixel & fmt->Gmask;  /* Isolate green component */
 	temp = temp >> fmt->Gshift; /* Shift it down to 8-bit */
 	temp = temp << fmt->Gloss;  /* Expand to a full 8-bit number */
 	green = (Uint8)temp;
-	
+
 	/* Get Blue component */
 	temp = pixel & fmt->Bmask;  /* Isolate blue component */
 	temp = temp >> fmt->Bshift; /* Shift it down to 8-bit */
 	temp = temp << fmt->Bloss;  /* Expand to a full 8-bit number */
 	blue = (Uint8)temp;
-	
+
 	/* Get Alpha component */
 	temp = pixel & fmt->Amask;  /* Isolate alpha component */
 	temp = temp >> fmt->Ashift; /* Shift it down to 8-bit */
 	temp = temp << fmt->Aloss;  /* Expand to a full 8-bit number */
 	alpha = (Uint8)temp;
-	
+
 	printf("Pixel Color (%s) -> R: %d,  G: %d,  B: %d,  A: %d\n", name, red, green, blue, alpha);
 }
 

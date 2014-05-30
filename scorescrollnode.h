@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,7 +31,7 @@
 #include <vector>
 
 #include "SDL.h"
-#include "SDL_ttf/SDL_ttf.h"
+#include "SDL/SDL_ttf.h"
 
 #include "highscoremanager.h"
 
@@ -43,23 +43,23 @@ class ScoreScrollNode: public Node
 {
 private:
 	typedef std::vector<SDL_Surface**> score_triplet_list;
-	
+
 	score_triplet_list _scores;
-	
+
 	TTF_Font *_font;
 	SDL_Color _name_color;
 	SDL_Color _score_color;
 	SDL_Color _bg_color;
-	
+
 	int _font_height, _height;
-	
+
 	SDL_Surface *_image;
 	SDL_Rect _scroll_rect, _rect;
 public:
 	ScoreScrollNode(Screen *);
 	void draw(SDL_Surface *);
 	void renderText();
-	
+
 	void onshow();
 	void ondrag(int relx, int rely);
 	void onscroll(bool up);

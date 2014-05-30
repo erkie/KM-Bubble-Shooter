@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "SDL_image/SDL_image.h"
+#include "SDL_image.h"
 
 #include "ball.h"
 #include "mysdl.h"
@@ -52,10 +52,10 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 			return NULL;
 		}
 		SDL_SetColorKey(image, SDL_SRCCOLORKEY, SDL_MapRGB(image->format, 0xFF, 0xFF, 0xFF));
-		
+
 		_image = image;
 	}
-	
+
 	// Create single image (if needed)
 	int index = color - 1;
 	if ( ! _balls[index] )
@@ -66,8 +66,8 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 												 BALL_WIDTH, BALL_HEIGHT, format->BitsPerPixel,
 												 format->Rmask, format->Bmask, format->Gmask, format->Amask);
 		//										 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-		//SDL_FillRect(ball, NULL, SDL_MapRGBA(format, 0x00, 0x00, 0x00, 0x00));
-		
+		//SDL_FillRect(ball, NULL, SDL_MapRGBA(format, 0x00, 0x00, 0x00, 0xFF));
+
 		SDL_Rect rect;
 		rect.y = 0;
 		switch ( color )
@@ -78,14 +78,14 @@ SDL_Surface *BallManager::load(Ball::Colors color)
 			case Ball::Blue:   rect.x = 69; break;
 			case Ball::Teal:   rect.x = 92; break;
 			case Ball::Purple: rect.x = 115; break;
-			default: std::cerr << "Sanity check failed" << std::endl;
+			default: std::cout << "Sanity check failed" << std::endl;
 		}
-		
+
 		draw_transparent_surface_onto_empty_surface(rect, ball, _image);
-		
+
 		_balls[index] = ball;
 	}
-	
+
 	return _balls[index];
 }
 
@@ -101,7 +101,7 @@ void BallManager::prepRemList(Grid *grid)
 {
 	// Clear old availables list
 	_available.erase(_available.begin(), _available.end());
-	
+
 	ball_list balls = grid->balls();
 	for ( ball_list::iterator iter = balls.begin(); iter != balls.end(); iter++ )
 		if ( count(_available.begin(), _available.end(), (*iter)->color()) == 0 )
@@ -111,7 +111,7 @@ void BallManager::prepRemList(Grid *grid)
 Ball::Colors BallManager::randomRemainingColor(Grid *grid)
 {
 	prepRemList(grid);
-	
+
 	std::random_shuffle(_available.begin(), _available.end());
 	return _available.front();
 }

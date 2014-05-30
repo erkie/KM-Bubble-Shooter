@@ -1,8 +1,6 @@
 kattMickisShooter.xcodeproj
 kattMickisShooter_Prefix.pch
 Info.plist
-SDLMain.h
-SDLMain.m
 English.lproj
 build
 SDL_gfx
@@ -16,3 +14,4 @@ icon.ico
 kattMickisShooter.dev
 kattMickisShooter.ico
 kattMickisShooter_*
+km-bubble-shooter
