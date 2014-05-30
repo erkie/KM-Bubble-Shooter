@@ -11,10 +11,10 @@
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,7 @@
 #include <cstdlib>
 
 #include "SDL.h"
-#include "SDL_gfx/SDL_rotozoom.h"
+#include "SDL_rotozoom.h"
 
 #include "mysdl.h"
 #include "ballmanager.h"
@@ -53,14 +53,14 @@ Ball* Ball::create(Game *game)
 Ball::Ball(Game *game): Sprite(game), _was_dangly(false), _state(Queued)
 {
 	setColor(Random);
-	
+
 	_rect = _image->clip_rect;
-	
+
 	_vel.x(0);
 	_vel.y(_game->size()->h * 2);
-	
+
 	_grid_x = _grid_y = -1;
-	
+
 	_anim = Fx();
 	_anim.mode(Fx::Single);
 }
@@ -101,30 +101,30 @@ void Ball::draw()
 {
 	if ( _game->isPaused() || ! visible() )
 		return;
-	
+
 	_rect.x = _pos.x();
 	_rect.y = _pos.y();
-	
+
 	// Make copy because SDL clips the passed rect (or so I think)
 	SDL_Rect cp_rect = _rect;
-	
+
 	// Center it to its position
-	int half = BALL_WIDTH / 2 - _image->clip_rect.w / 2;	
+	int half = BALL_WIDTH / 2 - _image->clip_rect.w / 2;
 	cp_rect.x += half;
 	cp_rect.y += half;
-	
+
 	SDL_BlitSurface(_image, NULL, _game->buffer(), &cp_rect);
 }
 
 void Ball::tick()
-{	
+{
 	if ( _game->isPaused() )
 		return;
-	
+
 	if ( _state == Moving )
 	{
 		Vector orig_pos(_pos);
-		
+
 		Ball *hit;
 		// Break movement into smaller pieces and analyze them
 		int pieces = 5, i;
@@ -134,46 +134,46 @@ void Ball::tick()
 			hit = _game->grid()->inCollision(*this);
 			if ( hit ) break;
 		}
-		
+
 		if ( i > pieces )
 			_pos = orig_pos + _vel * _game->tdelta();
-		
+
 		xPos(_pos.x());
 		yPos(_pos.y());
-		
+
 		if ( _pos.y() < 0 || (hit = _game->grid()->inCollision(*this)) )
 		{
 			_pos = orig_pos + _vel * (_game->tdelta() / pieces * (i - 1));
-			
+
 			// Okey, so I've hit something.
 			// What do I do next?
 			// 1. pin myself. (check)
 			// 2. settle on a grid position with my homies
 			// 3. add myself to Grid (check)
-			
+
 			setState(Pinned);
-			
+
 			// Remove myself from the empty movement void
 			_game->arrow()->setReady(true);
-			
+
 			// Animate bouncy bounce
 			active();
 			satisfyGrid();
-			
+
 			// Add myself to the warm land of Grid
 			_game->grid()->addBall(this);
-			
+
 			// I've hit a wall
 			if ( ! hit )
 			{
 				_game->decrementLives();
 			}
-				
+
 			play_ball_thud();
-			
+
 			return;
 		}
-		
+
 		const SDL_Rect *size = _game->size();
 
 		// Collision detection, wee!
@@ -181,14 +181,14 @@ void Ball::tick()
 		{
 			_vel._x *= -1;
 			xPos(0);
-			
+
 			play_ball_bounce();
 		}
 		else if ( _pos.x() + _rect.w > size->w )
 		{
 			_vel._x *= -1;
 			xPos(size->w - _rect.w);
-			
+
 			play_ball_bounce();
 		}
 
@@ -201,12 +201,12 @@ void Ball::tick()
 		}
 		// The end!
 	}
-	
+
 	if ( _anim.isRunning() )
 	{
 		SDL_FreeSurface(_image);
 		setImage(rotozoomSurface(_sprite, 1, _anim.step(), 1));
-		
+
 		// Has the motion stopped
 		if ( ! _anim.isRunning() )
 		{
@@ -219,14 +219,14 @@ void Ball::tick()
 Vector Ball::calculateGrid()
 {
 	int grid_size = _game->size()->w / BALL_GRID_W;
-	
+
 	int center_x = _pos.y() + _rect.h / 2;
 	int center_y = _pos.x() + _rect.w / 2;
-	
+
 	// These calculated are the idealised (where I really am) x/y-grid positions
 	int y = center_x / grid_size;
 	int x = (center_y - (y % 2 ? 12 : 0)) / grid_size;
-	
+
 	return Vector(x, y);
 }
 
@@ -234,27 +234,27 @@ void Ball::satisfyGrid()
 {
 	Vector grid = calculateGrid();
 	int x = grid.x(), y = grid.y();
-	
+
 	x = (x >= BALL_GRID_W) ? BALL_GRID_W - 1 : x;
-	
+
 	if ( _game->grid()->hasBallOn(x, y) )
 	{
 		y++;
 	}
-	
+
 	_grid_x = x;
 	_grid_y = y;
-	
+
 	gridToPos();
 }
 
 void Ball::gridToPos()
 {
 	int dd = _game->size()->w / BALL_GRID_W;
-	
+
 	int pos_x = dd * _grid_x + (_grid_y % 2 ? 12 : 0);
 	int pos_y = dd * _grid_y;
-	
+
 	xPos(pos_x);
 	yPos(pos_y);
 }
@@ -268,7 +268,7 @@ void Ball::initFx()
 {
 	if ( _anim.isRunning() )
 		return;
-	
+
 	// Make copy of the ball that we can enlarge
 	_image = SDL_DisplayFormatAlpha(_sprite);
 }
@@ -277,14 +277,14 @@ void Ball::active()
 {
 	if ( _anim.isRunning() )
 		return;
-	
+
 	initFx();
-	
+
 	// Prepare animation
 	_anim.value(1);
 	_anim.duration(250);
 	_anim.transition(active_transition);
-	
+
 	// Active animation
 	_anim.start();
 }
@@ -292,14 +292,14 @@ void Ball::active()
 void Ball::bam()
 {
 	initFx();
-	
+
 	_anim.stop();
-	
+
 	_anim.transition(bam_transition);
 	_anim.value(1);
 	_anim.duration(40);
 	_anim.start();
-	
+
 	play_ball_die();
 }
 
